@@ -1,0 +1,56 @@
+SDL2 initialized
+SDL2 version: SDL-release-2.28.4-0-gcc016b004
+SDL2 image initialized
+SDL2 mixer initialized
+SDL2 window created
+0
+No joysticks connected!
+
+Loading font: 6px
+Loaded font: res/font\6px.ttf
+Loading font: arial
+Loaded font: res/font\arial.TTF
+Loading font: code8
+Loaded font: res/font\code8.ttf
+Loading font: jetbrains
+Loaded font: res/font\jetbrains.ttf
+Loading font: Licence
+ERROR: Failed to load font: res/font\Licence.txt
+Loading font: NotJamChunkySans
+Loaded font: res/font\NotJamChunkySans.ttf
+Loading font: pixolleta
+Loaded font: res/font\pixolleta.ttf
+Loading sound: damage_sound
+SoundManager::load_sound: loaded sound damage_sound
+Loading sound: entering
+SoundManager::load_sound: loaded sound entering
+Loading sound: merchant_finish
+SoundManager::load_sound: loaded sound merchant_finish
+Loading sound: merchant_tick
+SoundManager::load_sound: loaded sound merchant_tick
+Loading sound: pause
+SoundManager::load_sound: loaded sound pause
+Loading sound: planting
+SoundManager::load_sound: loaded sound planting
+Loading sound: shoot
+SoundManager::load_sound: loaded sound shoot
+Loading sound: unpause
+SoundManager::load_sound: loaded sound unpause
+Loading sound: victory
+SoundManager::load_sound: loaded sound victory
+res/character_atlas.aseprite
+res/concept.aseprite
+res/logo.aseprite
+res/ui.aseprite
+Finished aseprite load!
+------------
+Aseprite: character_atlas
+Aseprite: concept
+Aseprite: logo
+Aseprite: ui
+Loaded shader: res/shaders/light_vertex.glsl and res/shaders/newoutline.frag.glsl
+Game:4
+4
+Game initialized
+Engine post init
+SDL2 quit
