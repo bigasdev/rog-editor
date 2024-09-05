@@ -24,6 +24,7 @@ std::string selected_asset;
 
 vec2 mouse_pos;
 bool mouse_clicked;
+bool mouse_wheel_clicked;
 vec2 drag_pos = {0, 0};
 vec2 end_drag_pos = {0, 0};
 vec2 drag_area_pos = {0, 0};
@@ -64,10 +65,11 @@ void Game::init() {
 
   g_camera->track_pos(&pos);
 
-  g_input_manager->bind_mouse(&mouse_clicked, nullptr, nullptr);
+  g_input_manager->bind_mouse(&mouse_clicked, nullptr, &mouse_wheel_clicked);
 }
 
-void Game::fixed_update(double tmod) {}
+void Game::fixed_update(double tmod) {
+}
 
 void Game::update(double dt) {
   m_cooldown->update(dt);
@@ -108,8 +110,8 @@ void Game::draw_ui() {
   Rect rect;
   rect.x = drag_pos.x;
   rect.y = drag_pos.y;
-  rect.w = end_drag_pos.x - drag_pos.x;
-  rect.h = end_drag_pos.y - drag_pos.y;
+  rect.w = drag_area_pos.x;
+  rect.h = drag_area_pos.y;
 
   g_renderer->draw_rect(rect, {255, 0, 0, 255});
 }

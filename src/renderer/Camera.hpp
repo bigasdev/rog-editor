@@ -16,6 +16,7 @@ public:
 
   GPU_Camera** get_gpu_cam();
   int get_game_scale() { return m_game_scale; }
+  vec2 get_camera_pos();
 
   bool is_on_screen(vec2 pos);
   void track_pos(vec2* pos);

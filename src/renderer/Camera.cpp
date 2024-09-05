@@ -27,6 +27,10 @@ GPU_Camera** Camera::get_gpu_cam() {
   return &m_camera;
 }
 
+vec2 Camera::get_camera_pos() {
+  return {m_camera->x, m_camera->y};
+}
+
 Camera::~Camera() {
   delete m_camera;
 }
