@@ -12,6 +12,7 @@
 #include "../tools/Cooldown.hpp"
 #include "../tools/Logger.hpp"
 #include "../tools/Math.hpp"
+#include "../tools/Mouse.hpp"
 #include "DataLoader.hpp"
 #include "SDL.h"
 
@@ -19,6 +20,14 @@ std::string project_folder;
 Sprite test;
 vec2 pos = {0, 0};
 std::map<std::string, Sprite> sprite_map;
+std::string selected_asset;
+
+vec2 mouse_pos;
+bool mouse_clicked;
+vec2 drag_pos = {0, 0};
+vec2 end_drag_pos = {0, 0};
+vec2 drag_area_pos = {0, 0};
+bool started_drag = false;
 
 Game::Game() {}
 
@@ -31,9 +40,9 @@ void Game::init() {
   g_cooldown = m_cooldown;
   g_camera = m_camera;
 
-  project_folder = Data_Loader::load_folder("Select project folder");
+  /*project_folder = Data_Loader::load_folder("Select project folder");
   g_res->reset_aseprites();
-  g_res->load_aseprites(project_folder + "/res/");
+  g_res->load_aseprites(project_folder + "/res/");*/
 
   auto files = g_res->get_aseprite_names();
   int x = 0;
@@ -47,19 +56,39 @@ void Game::init() {
     spr.dst_y = 0;
     spr.wid = 500;
     spr.hei = 500;
-    spr.scale_x = 0.65f;
-    spr.scale_y = 0.65f;
+    spr.scale_x = 1.0f;
+    spr.scale_y = 1.0f;
 
     sprite_map[file] = spr;
-    x += 50;
   }
 
   g_camera->track_pos(&pos);
+
+  g_input_manager->bind_mouse(&mouse_clicked, nullptr, nullptr);
 }
 
 void Game::fixed_update(double tmod) {}
 
-void Game::update(double dt) { m_cooldown->update(dt); }
+void Game::update(double dt) {
+  m_cooldown->update(dt);
+
+  mouse_pos = Mouse::get_mouse_pos();
+
+  if (mouse_clicked) {
+    if (!started_drag) {
+      started_drag = true;
+      drag_pos = mouse_pos;
+    }
+  } else {
+    started_drag = false;
+  }
+
+  if (started_drag) {
+    end_drag_pos = mouse_pos;
+    drag_area_pos.x = end_drag_pos.x - drag_pos.x;
+    drag_area_pos.y = end_drag_pos.y - drag_pos.y;
+  }
+}
 
 void Game::post_update(double dt) {
   m_camera->move();
@@ -68,22 +97,40 @@ void Game::post_update(double dt) {
 
 void Game::draw_root() {}
 
-void Game::draw_ent() {
-  for (auto &[key, value] : sprite_map) {
-    g_renderer->draw(*g_res->get_texture(key), value, {0, 0});
+void Game::draw_ent() {}
+
+void Game::draw_ui() {
+  if (selected_asset != "") {
+    auto spr = sprite_map[selected_asset];
+    g_renderer->draw(*g_res->get_texture(selected_asset), spr, {200, 200});
   }
+
+  Rect rect;
+  rect.x = drag_pos.x;
+  rect.y = drag_pos.y;
+  rect.w = end_drag_pos.x - drag_pos.x;
+  rect.h = end_drag_pos.y - drag_pos.y;
+
+  g_renderer->draw_rect(rect, {255, 0, 0, 255});
 }
 
-void Game::draw_ui() {}
-
-void Game::imgui_assets() {
-}
+void Game::imgui_assets() {}
 
 void Game::imgui_map() {
   ImGui::Begin("Assets");
   for (auto &[key, value] : sprite_map) {
-    ImGui::Button(key.c_str());
+    if (ImGui::Button(key.c_str())) {
+      selected_asset = key;
+    }
   }
+  ImGui::End();
+
+  ImGui::Begin("Mouse info");
+  ImGui::Text("Mouse pos: %f %f", mouse_pos.x, mouse_pos.y);
+  ImGui::Text("Mouse state : %d", mouse_clicked);
+  ImGui::Text("Drag pos: %f %f", drag_pos.x, drag_pos.y);
+  ImGui::Text("End drag pos: %f %f", end_drag_pos.x, end_drag_pos.y);
+  ImGui::Text("Drag area pos: %f %f", drag_area_pos.x, drag_area_pos.y);
   ImGui::End();
 }
 
