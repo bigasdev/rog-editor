@@ -16,6 +16,8 @@
 #include "SDL.h"
 
 std::string project_folder;
+Sprite test;
+vec2 pos = {0,0};
 
 Game::Game() {
 }
@@ -33,6 +35,16 @@ void Game::init() {
   project_folder = Data_Loader::load_folder("Select project folder");
   g_res->reset_aseprites();
   g_res->load_aseprites(project_folder + "/res/");
+
+  test.dst_x = 0;
+  test.dst_y = 0;
+  test.wid = 500;
+  test.hei = 500;
+  test.scale_x = 0.1f;
+  test.scale_y = 0.1f;
+
+
+  g_camera->track_pos(&pos);
 }
 
 void Game::fixed_update(double tmod) {
@@ -51,6 +63,7 @@ void Game::draw_root() {
 }
 
 void Game::draw_ent(){
+  g_renderer->draw(*g_res->get_texture("framework"), test, pos);
 }
 
 void Game::draw_ui(){
