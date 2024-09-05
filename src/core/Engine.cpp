@@ -230,7 +230,7 @@ void Engine::draw() {
 
 #if _IMGUI
   GPU_FlushBlitBuffer();
-  GUI::draw([&]() {});
+  m_game->draw_imgui();
 #endif
 
   GPU_Flip(m_gpu);
