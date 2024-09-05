@@ -18,6 +18,7 @@
 std::string project_folder;
 Sprite test;
 vec2 pos = {0,0};
+std::map<std::string, Sprite> sprite_map;
 
 Game::Game() {
 }
@@ -36,13 +37,24 @@ void Game::init() {
   g_res->reset_aseprites();
   g_res->load_aseprites(project_folder + "/res/");
 
-  test.dst_x = 0;
-  test.dst_y = 0;
-  test.wid = 500;
-  test.hei = 500;
-  test.scale_x = 0.1f;
-  test.scale_y = 0.1f;
+  auto files = g_res->get_aseprite_names();
+  int x = 0;
+  for (auto file : files) {
+    Logger::log(file);
 
+    auto spr = Sprite();
+    spr.spr_x = x;
+    spr.spr_y = 0;
+    spr.dst_x = 0;
+    spr.dst_y = 0;
+    spr.wid = 500;
+    spr.hei = 500;
+    spr.scale_x = 0.65f;
+    spr.scale_y = 0.65f;
+
+    sprite_map[file] = spr;
+    x += 50;
+  }
 
   g_camera->track_pos(&pos);
 }
@@ -63,7 +75,9 @@ void Game::draw_root() {
 }
 
 void Game::draw_ent(){
-  g_renderer->draw(*g_res->get_texture("framework"), test, pos);
+  for (auto& [key, value] : sprite_map) {
+    g_renderer->draw(*g_res->get_texture(key), value, {0,0});
+  }
 }
 
 void Game::draw_ui(){

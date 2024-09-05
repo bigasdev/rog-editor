@@ -43,6 +43,7 @@ public:
   PCol get_color_primitive(int idx) { return m_palette[idx].to_pcol(); };
   GPU_Image **get_texture(std::string name);
   std::vector<std::string> get_shaders() { return m_shaders; }
+  std::vector<std::string> get_aseprite_names();
   Uint32 get_shader_id();
   GPU_ShaderBlock get_shader_block();
 

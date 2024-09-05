@@ -163,6 +163,14 @@ void Res::load_aseprites(std::string path) {
   }
 }
 
+std::vector<std::string> Res::get_aseprite_names() {
+  std::vector<std::string> names;
+  for (auto const &aseprite : m_aseprite_textures) {
+    names.push_back(aseprite.first);
+  }
+  return names;
+}
+
 void Res::load_pallete() {
   std::string path = "res/sweetie-16-1x.png";
 
