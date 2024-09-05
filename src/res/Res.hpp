@@ -33,7 +33,7 @@ public:
   // loaders
   void load_fonts();
   void load_sounds();
-  void load_aseprites();
+  void load_aseprites(std::string path = "res/");
   void load_pallete();
   void load_shaders();
 
@@ -47,6 +47,7 @@ public:
   GPU_ShaderBlock get_shader_block();
 
   void create_asset_data(std::string file, std::string name, std::string folder);
+  void reset_aseprites();
 
 private:
   std::map<std::string, GPU_Image*> m_textures;

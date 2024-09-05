@@ -49,6 +49,7 @@ class Cooldown {
 public:
 	Cooldown();
 
+  /*test*/
 	void update(double deltaTime);
 
 	//set

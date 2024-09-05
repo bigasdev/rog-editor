@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "../renderer/AppGui.hpp"
+#include "DataLoader.hpp"
 #include "../imgui/imgui.h"
 #include "../renderer/Camera.hpp"
 #include "../tools/Cooldown.hpp"
@@ -14,6 +15,7 @@
 #include "../tools/Logger.hpp"
 #include "SDL.h"
 
+std::string project_folder;
 
 Game::Game() {
 }
@@ -27,6 +29,10 @@ void Game::init() {
 
   g_cooldown = m_cooldown;
   g_camera = m_camera;
+
+  project_folder = Data_Loader::load_folder("Select project folder");
+  g_res->reset_aseprites();
+  g_res->load_aseprites(project_folder + "/res/");
 }
 
 void Game::fixed_update(double tmod) {
@@ -54,7 +60,7 @@ void Game::draw_ui(){
 void Game::draw_imgui() {
   GUI::draw([&]() {
     ImGui::Begin("Game");
-    ImGui::Text("Hello, world!");
+    ImGui::Text(project_folder.c_str());
     ImGui::End();
   });
 }

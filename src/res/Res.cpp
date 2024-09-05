@@ -96,8 +96,8 @@ void Res::load_sounds() {
   }
 }
 
-void Res::load_aseprites() {
-  auto files = Reader::get_extension_files("res/", ".aseprite");
+void Res::load_aseprites(std::string path) {
+  auto files = Reader::get_extension_files(path, ".aseprite");
   m_aseprite_files.clear();
 
   if (m_aseprite_textures.size() > 0) {
@@ -306,6 +306,15 @@ GPU_Image **Res::get_texture(std::string name) {
     Logger::error("Texture " + std::string(name) + " not found!");
     return nullptr;
   }
+}
+
+void Res::reset_aseprites() {
+  for (auto const &aseprite : m_aseprite_textures) {
+    GPU_FreeImage(aseprite.second);
+  }
+
+  m_aseprite_textures.clear();
+  m_aseprite_files.clear();
 }
 
 void Res::update() {
