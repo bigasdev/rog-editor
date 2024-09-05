@@ -1,30 +1,28 @@
 #include "Game.hpp"
-#include "../renderer/AppGui.hpp"
-#include "DataLoader.hpp"
-#include "../imgui/imgui.h"
-#include "../renderer/Camera.hpp"
-#include "../tools/Cooldown.hpp"
 #include "../core/Engine.hpp"
 #include "../core/InputManager.hpp"
-#include "../renderer/Renderer.hpp"
-#include "../res/Res.hpp"
-#include "../core/global.hpp"
 #include "../core/Timer.hpp"
-#include "../tools/Math.hpp"
+#include "../core/global.hpp"
+#include "../imgui/imgui.h"
+#include "../renderer/AppGui.hpp"
+#include "../renderer/Camera.hpp"
+#include "../renderer/Renderer.hpp"
 #include "../renderer/Sprite.hpp"
+#include "../res/Res.hpp"
+#include "../tools/Cooldown.hpp"
 #include "../tools/Logger.hpp"
+#include "../tools/Math.hpp"
+#include "DataLoader.hpp"
 #include "SDL.h"
 
 std::string project_folder;
 Sprite test;
-vec2 pos = {0,0};
+vec2 pos = {0, 0};
 std::map<std::string, Sprite> sprite_map;
 
-Game::Game() {
-}
+Game::Game() {}
 
-Game::~Game() {
-}
+Game::~Game() {}
 
 void Game::init() {
   m_camera = new Camera(g_engine->get_window_size());
@@ -59,40 +57,38 @@ void Game::init() {
   g_camera->track_pos(&pos);
 }
 
-void Game::fixed_update(double tmod) {
-}
+void Game::fixed_update(double tmod) {}
 
-void Game::update(double dt) {
-  m_cooldown->update(dt);
-}
+void Game::update(double dt) { m_cooldown->update(dt); }
 
 void Game::post_update(double dt) {
   m_camera->move();
   m_camera->update();
 }
 
-void Game::draw_root() {
-}
+void Game::draw_root() {}
 
-void Game::draw_ent(){
-  for (auto& [key, value] : sprite_map) {
-    g_renderer->draw(*g_res->get_texture(key), value, {0,0});
+void Game::draw_ent() {
+  for (auto &[key, value] : sprite_map) {
+    g_renderer->draw(*g_res->get_texture(key), value, {0, 0});
   }
 }
 
-void Game::draw_ui(){
+void Game::draw_ui() {}
 
+void Game::imgui_assets() {
+}
+
+void Game::imgui_map() {
+  ImGui::Begin("Assets");
+  for (auto &[key, value] : sprite_map) {
+    ImGui::Button(key.c_str());
+  }
+  ImGui::End();
 }
 
 void Game::draw_imgui() {
-  GUI::draw([&]() {
-    ImGui::Begin("Game");
-    ImGui::Text(project_folder.c_str());
-    ImGui::End();
-  });
+  GUI::draw([this]() { this->imgui_map(); });
 }
 
-void Game::clean() {
-}
-
-
+void Game::clean() {}

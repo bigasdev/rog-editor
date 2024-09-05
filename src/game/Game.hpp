@@ -22,6 +22,8 @@ public:
   void draw_root();
   void draw_ent();
   void draw_ui();
+  void imgui_assets();
+  void imgui_map();
   void draw_imgui();
   void clean();
 private:
