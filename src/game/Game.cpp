@@ -15,6 +15,7 @@
 #include "../tools/Mouse.hpp"
 #include "DataLoader.hpp"
 #include "SDL.h"
+#include "SDL_gpu.h"
 
 std::string project_folder;
 Sprite test;
@@ -25,10 +26,9 @@ std::string selected_asset;
 vec2 mouse_pos;
 bool mouse_clicked;
 bool mouse_wheel_clicked;
-vec2 drag_pos = {0, 0};
-vec2 end_drag_pos = {0, 0};
-vec2 drag_area_pos = {0, 0};
-bool started_drag = false;
+
+int grid_ratio = 16;
+float invisible_ratio = 0;
 
 Game::Game() {}
 
@@ -74,22 +74,7 @@ void Game::fixed_update(double tmod) {
 void Game::update(double dt) {
   m_cooldown->update(dt);
 
-  mouse_pos = Mouse::get_mouse_pos();
-
-  if (mouse_clicked) {
-    if (!started_drag) {
-      started_drag = true;
-      drag_pos = mouse_pos;
-    }
-  } else {
-    started_drag = false;
-  }
-
-  if (started_drag) {
-    end_drag_pos = mouse_pos;
-    drag_area_pos.x = end_drag_pos.x - drag_pos.x;
-    drag_area_pos.y = end_drag_pos.y - drag_pos.y;
-  }
+  invisible_ratio = grid_ratio * g_camera->get_game_scale();
 }
 
 void Game::post_update(double dt) {
@@ -104,22 +89,26 @@ void Game::draw_ent() {}
 void Game::draw_ui() {
   if (selected_asset != "") {
     auto spr = sprite_map[selected_asset];
-    g_renderer->draw(*g_res->get_texture(selected_asset), spr, {200, 200});
+    GPU_Image* tex = *g_res->get_texture(selected_asset);
+    g_renderer->draw(tex, spr, {0, 100});
+
+    auto w = tex->w*g_camera->get_game_scale();
+    auto h = tex->h*g_camera->get_game_scale();
+    Logger::log("w: " + std::to_string(w) + " h: " + std::to_string(h));
+
+    for(int i = 0; i < w/grid_ratio; i += invisible_ratio){
+      for(int j = 0; j < h/grid_ratio; j += invisible_ratio){
+        g_renderer->draw_rect({i, 100+j, static_cast<int>(invisible_ratio), static_cast<int>(invisible_ratio)}, {255, 255, 255, 255}, false);
+      }
+    }
   }
-
-  Rect rect;
-  rect.x = drag_pos.x;
-  rect.y = drag_pos.y;
-  rect.w = drag_area_pos.x;
-  rect.h = drag_area_pos.y;
-
-  g_renderer->draw_rect(rect, {255, 0, 0, 255});
 }
 
 void Game::imgui_assets() {}
 
 void Game::imgui_map() {
   ImGui::Begin("Assets");
+  ImGui::InputInt("Grid ratio", &grid_ratio);
   for (auto &[key, value] : sprite_map) {
     if (ImGui::Button(key.c_str())) {
       selected_asset = key;
@@ -130,9 +119,6 @@ void Game::imgui_map() {
   ImGui::Begin("Mouse info");
   ImGui::Text("Mouse pos: %f %f", mouse_pos.x, mouse_pos.y);
   ImGui::Text("Mouse state : %d", mouse_clicked);
-  ImGui::Text("Drag pos: %f %f", drag_pos.x, drag_pos.y);
-  ImGui::Text("End drag pos: %f %f", end_drag_pos.x, end_drag_pos.y);
-  ImGui::Text("Drag area pos: %f %f", drag_area_pos.x, drag_area_pos.y);
   ImGui::End();
 }
 
