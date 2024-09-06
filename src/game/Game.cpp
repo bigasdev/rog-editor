@@ -94,10 +94,10 @@ void Game::draw_ui() {
 
     auto w = tex->w*g_camera->get_game_scale();
     auto h = tex->h*g_camera->get_game_scale();
-    Logger::log("w: " + std::to_string(w) + " h: " + std::to_string(h));
 
-    for(int i = 0; i < w/grid_ratio; i += invisible_ratio){
-      for(int j = 0; j < h/grid_ratio; j += invisible_ratio){
+    for(int i = 0; i < w; i += invisible_ratio){
+      for(int j = 0; j < h; j += invisible_ratio){
+        Logger::log("i: " + std::to_string(i) + " j: " + std::to_string(j));
         g_renderer->draw_rect({i, 100+j, static_cast<int>(invisible_ratio), static_cast<int>(invisible_ratio)}, {255, 255, 255, 255}, false);
       }
     }
