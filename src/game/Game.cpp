@@ -27,8 +27,8 @@ vec2 mouse_pos;
 bool mouse_clicked;
 bool mouse_wheel_clicked;
 
-int grid_ratio = 16;
-float invisible_ratio = 0;
+vec2 grid_ratio = {16, 16};
+vec2 invisible_ratio = {16, 16};
 
 Game::Game() {}
 
@@ -90,14 +90,15 @@ void Game::draw_ui() {
   if (selected_asset != "") {
     auto spr = sprite_map[selected_asset];
     GPU_Image* tex = *g_res->get_texture(selected_asset);
+    spr.wid = tex->w;
+    spr.hei = tex->h;
     g_renderer->draw(tex, spr, {0, 100});
 
     auto w = tex->w*g_camera->get_game_scale();
     auto h = tex->h*g_camera->get_game_scale();
 
-    for(int i = 0; i < w; i += invisible_ratio){
-      for(int j = 0; j < h; j += invisible_ratio){
-        Logger::log("i: " + std::to_string(i) + " j: " + std::to_string(j));
+    for(int i = 0; i < w; i += invisible_ratio.x){
+      for(int j = 0; j < h; j += invisible_ratio.y){
         g_renderer->draw_rect({i, 100+j, static_cast<int>(invisible_ratio), static_cast<int>(invisible_ratio)}, {255, 255, 255, 255}, false);
       }
     }
