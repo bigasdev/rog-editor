@@ -26,6 +26,8 @@ public:
   void imgui_map();
   void draw_imgui();
   void clean();
+
+  void save();
 private:
 
   Camera *m_camera;

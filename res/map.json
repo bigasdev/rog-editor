@@ -1,0 +1,16 @@
+[
+    {
+        "dst_x": 0.0,
+        "dst_y": 0.0,
+        "file_name": "character_atlas",
+        "hei": 16.0,
+        "wid": 16.0
+    },
+    {
+        "dst_x": 1.5,
+        "dst_y": 0.0,
+        "file_name": "concept",
+        "hei": 16.0,
+        "wid": 16.0
+    }
+]

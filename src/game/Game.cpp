@@ -16,7 +16,12 @@
 #include "DataLoader.hpp"
 #include "SDL.h"
 #include "SDL_gpu.h"
+#include <iomanip>
+#include <memory>
 #include <string>
+#include <fstream>
+#include "SDL_keycode.h"
+#include "json.hpp"
 
 struct Asset{
   std::string file_name;
@@ -27,8 +32,8 @@ std::string project_folder;
 Sprite test;
 vec2 pos = {0, 0};
 std::map<std::string, Sprite> sprite_map;
-std::vector<Asset> m_assets;
-Asset m_selected_asset;
+std::vector<std::unique_ptr<Asset>> m_assets;
+std::unique_ptr<Asset>* m_selected_asset;
 std::string selected_asset;
 
 vec2 mouse_pos;
@@ -37,6 +42,8 @@ bool mouse_wheel_clicked;
 
 vec2 grid_ratio = {16, 16};
 vec2 invisible_ratio = {16, 16};
+
+bool save_pressed = false;
 
 Game::Game() {}
 
@@ -74,6 +81,7 @@ void Game::init() {
   g_camera->track_pos(&pos);
 
   g_input_manager->bind_mouse(&mouse_clicked, nullptr, &mouse_wheel_clicked);
+  g_input_manager->bind_keyboard(SDLK_s, &save_pressed);
 }
 
 void Game::fixed_update(double tmod) {
@@ -83,6 +91,11 @@ void Game::update(double dt) {
   m_cooldown->update(dt);
 
   invisible_ratio = grid_ratio * g_camera->get_game_scale();
+
+  if(save_pressed){
+    save();
+    save_pressed = false;
+  }
 }
 
 void Game::post_update(double dt) {
@@ -93,9 +106,9 @@ void Game::post_update(double dt) {
 void Game::draw_root() {}
 
 void Game::draw_ent() {
-  if(m_selected_asset.file_name != ""){
-    auto spr = m_selected_asset.spr;
-    auto tex = *g_res->get_texture(m_selected_asset.file_name);
+  if(m_selected_asset != nullptr){
+    auto spr = m_selected_asset->get()->spr;
+    auto tex = *g_res->get_texture(m_selected_asset->get()->file_name);
     g_renderer->draw(tex, spr, {0, 0});
   }
 }
@@ -133,7 +146,7 @@ void Game::draw_ui() {
             Logger::log("asset dst_x: " + std::to_string(spr.dst_x) + " dst_y: " + std::to_string(spr.dst_y) + " wid: " + std::to_string(spr.wid) + " hei: " + std::to_string(spr.hei));
 
             asset.spr = spr;
-            m_assets.push_back(asset);
+            m_assets.push_back(std::make_unique<Asset>(asset));
             mouse_clicked = false;
           }
         }
@@ -154,19 +167,19 @@ void Game::imgui_map() {
   int i = 0;
   for(auto& asset : m_assets){
     if (ImGui::Button(std::to_string(i).c_str())) {
-      m_selected_asset = asset;
+      m_selected_asset = &asset;
     }
     i++;
   }
   ImGui::End();
 
-  if(m_selected_asset.file_name != ""){
+  if(m_selected_asset != nullptr){
     ImGui::Begin("Selected asset");
-    ImGui::Text("File name: %s", m_selected_asset.file_name.c_str());
-    ImGui::DragFloat("dst_x", &m_selected_asset.spr.dst_x, 0.1f);
-    ImGui::DragFloat("dst_y", &m_selected_asset.spr.dst_y, 0.1f);
-    ImGui::DragFloat("wid", &m_selected_asset.spr.wid, 0.1f);
-    ImGui::DragFloat("hei", &m_selected_asset.spr.hei, 0.1f);
+    Logger::log("dst x " + std::to_string(m_selected_asset->get()->spr.dst_x));
+    ImGui::DragFloat("dst_x", &m_selected_asset->get()->spr.dst_x, 0.1f);
+    ImGui::DragFloat("dst_y", &m_selected_asset->get()->spr.dst_y, 0.1f);
+    ImGui::DragFloat("wid", &m_selected_asset->get()->spr.wid, 0.1f);
+    ImGui::DragFloat("hei", &m_selected_asset->get()->spr.hei, 0.1f);
     ImGui::End();
   }
 
@@ -189,6 +202,24 @@ void Game::imgui_map() {
 
 void Game::draw_imgui() {
   GUI::draw([this]() { this->imgui_map(); });
+}
+
+void Game::save(){
+  nlohmann::json j;
+  Logger::log("Saving map");
+  for(auto& asset : m_assets){
+    nlohmann::json asset_j;
+    asset_j["file_name"] = asset->file_name;
+    asset_j["dst_x"] = asset->spr.dst_x;
+    asset_j["dst_y"] = asset->spr.dst_y;
+    asset_j["wid"] = asset->spr.wid;
+    asset_j["hei"] = asset->spr.hei;
+
+    j.push_back(asset_j);
+  }
+  std::ofstream o("res/map.json");
+  o << std::setw(4) << j << std::endl;
+  o.close();
 }
 
 void Game::clean() {}
