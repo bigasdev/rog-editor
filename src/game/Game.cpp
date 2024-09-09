@@ -104,7 +104,13 @@ void Game::post_update(double dt) {
   m_camera->update();
 }
 
-void Game::draw_root() {}
+void Game::draw_root() {
+  g_renderer->draw_rect({0,0, grid_ratio.x * sprite_zoom, grid_ratio.y * sprite_zoom}, {255, 255, 255, 55}, true);
+  g_renderer->draw_line({0, (grid_ratio.y * sprite_zoom) + 8, grid_ratio.x * sprite_zoom, (grid_ratio.y * sprite_zoom) + 8}, {255, 255, 255, 255});
+  g_renderer->draw_text({0, (grid_ratio.y * sprite_zoom) + 10}, (std::to_string((grid_ratio.x * sprite_zoom)) + " px").c_str(), g_res->get_font("arial"), {255, 255, 255, 255});
+  g_renderer->draw_line({(grid_ratio.x * sprite_zoom) + 8, 0, (grid_ratio.x * sprite_zoom) + 8, grid_ratio.y * sprite_zoom}, {255, 255, 255, 255});
+  g_renderer->draw_text({(grid_ratio.x * sprite_zoom) + 10, 0}, (std::to_string((grid_ratio.y * sprite_zoom)) + " px").c_str(), g_res->get_font("arial"), {255, 255, 255, 255});
+}
 
 void Game::draw_ent() {
   if(m_selected_asset != nullptr){
