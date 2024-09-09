@@ -160,6 +160,16 @@ void Game::imgui_map() {
   }
   ImGui::End();
 
+  if(m_selected_asset.file_name != ""){
+    ImGui::Begin("Selected asset");
+    ImGui::Text("File name: %s", m_selected_asset.file_name.c_str());
+    ImGui::DragFloat("dst_x", &m_selected_asset.spr.dst_x, 0.1f);
+    ImGui::DragFloat("dst_y", &m_selected_asset.spr.dst_y, 0.1f);
+    ImGui::DragFloat("wid", &m_selected_asset.spr.wid, 0.1f);
+    ImGui::DragFloat("hei", &m_selected_asset.spr.hei, 0.1f);
+    ImGui::End();
+  }
+
   ImGui::Begin("Sprites");
   ImGui::InputInt("Grid ratio x", &x);
   ImGui::InputInt("Grid ratio y", &y);
