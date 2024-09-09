@@ -59,4 +59,10 @@ logo
 ui
 Game initialized
 Engine post init
+asset dst_x: 0.000000 dst_y: 0.000000 wid: 16.000000 hei: 16.000000
+asset dst_x: 0.000000 dst_y: 1.000000 wid: 16.000000 hei: 16.000000
+asset dst_x: 0.000000 dst_y: 3.000000 wid: 16.000000 hei: 16.000000
+asset dst_x: 0.000000 dst_y: 6.000000 wid: 13.000000 hei: 8.000000
+asset dst_x: 0.000000 dst_y: 0.000000 wid: 64.000000 hei: 64.000000
+asset dst_x: 0.000000 dst_y: 2.000000 wid: 16.000000 hei: 16.000000
 SDL2 quit

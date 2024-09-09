@@ -16,6 +16,7 @@
 #include "DataLoader.hpp"
 #include "SDL.h"
 #include "SDL_gpu.h"
+#include <string>
 
 struct Asset{
   std::string file_name;
@@ -124,10 +125,12 @@ void Game::draw_ui() {
             Asset asset;
             asset.file_name = selected_asset;
             Sprite spr;
-            spr.dst_x = i;
-            spr.dst_y = j;
+            spr.dst_x = i/invisible_ratio.x;
+            spr.dst_y = j/invisible_ratio.y;
             spr.wid = grid_ratio.x;
             spr.hei = grid_ratio.y;
+
+            Logger::log("asset dst_x: " + std::to_string(spr.dst_x) + " dst_y: " + std::to_string(spr.dst_y) + " wid: " + std::to_string(spr.wid) + " hei: " + std::to_string(spr.hei));
 
             asset.spr = spr;
             m_assets.push_back(asset);
@@ -148,10 +151,12 @@ int x = 16;
 int y = 16;
 void Game::imgui_map() {
   ImGui::Begin("Assets");
+  int i = 0;
   for(auto& asset : m_assets){
-    if (ImGui::Button(asset.file_name.c_str())) {
+    if (ImGui::Button(std::to_string(i).c_str())) {
       m_selected_asset = asset;
     }
+    i++;
   }
   ImGui::End();
 
