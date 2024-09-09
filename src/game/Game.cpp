@@ -17,10 +17,17 @@
 #include "SDL.h"
 #include "SDL_gpu.h"
 
+struct Asset{
+  std::string file_name;
+  Sprite spr;
+};
+
 std::string project_folder;
 Sprite test;
 vec2 pos = {0, 0};
 std::map<std::string, Sprite> sprite_map;
+std::vector<Asset> m_assets;
+Asset m_selected_asset;
 std::string selected_asset;
 
 vec2 mouse_pos;
@@ -84,7 +91,13 @@ void Game::post_update(double dt) {
 
 void Game::draw_root() {}
 
-void Game::draw_ent() {}
+void Game::draw_ent() {
+  if(m_selected_asset.file_name != ""){
+    auto spr = m_selected_asset.spr;
+    auto tex = *g_res->get_texture(m_selected_asset.file_name);
+    g_renderer->draw(tex, spr, {0, 0});
+  }
+}
 
 void Game::draw_ui() {
   if (selected_asset != "") {
@@ -100,13 +113,28 @@ void Game::draw_ui() {
     for(int i = 0; i < w; i += invisible_ratio.x){
       for(int j = 0; j < h; j += invisible_ratio.y){
         auto mouse_hover = Mouse::is_at_area({i, 100+j, invisible_ratio.x, invisible_ratio.y}, g_engine->get_window_size()->x, g_engine->get_window_size()->y);
-        Logger::log(std::to_string(mouse_hover));
         Col color = {255, 255, 255, 45};
         auto fill = false;
+
         if(mouse_hover){
           color = {0, 255, 0, 85};
           fill = true;
+
+          if(mouse_clicked){
+            Asset asset;
+            asset.file_name = selected_asset;
+            Sprite spr;
+            spr.dst_x = i;
+            spr.dst_y = j;
+            spr.wid = grid_ratio.x;
+            spr.hei = grid_ratio.y;
+
+            asset.spr = spr;
+            m_assets.push_back(asset);
+            mouse_clicked = false;
+          }
         }
+
 
         g_renderer->draw_rect({i, 100+j, static_cast<int>(invisible_ratio.x), static_cast<int>(invisible_ratio.y)}, color, fill);
       }
@@ -120,6 +148,14 @@ int x = 16;
 int y = 16;
 void Game::imgui_map() {
   ImGui::Begin("Assets");
+  for(auto& asset : m_assets){
+    if (ImGui::Button(asset.file_name.c_str())) {
+      m_selected_asset = asset;
+    }
+  }
+  ImGui::End();
+
+  ImGui::Begin("Sprites");
   ImGui::InputInt("Grid ratio x", &x);
   ImGui::InputInt("Grid ratio y", &y);
   grid_ratio = {static_cast<float>(x), static_cast<float>(y)};
