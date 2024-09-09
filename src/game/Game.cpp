@@ -180,6 +180,9 @@ void Game::imgui_map() {
     ImGui::DragFloat("dst_y", &m_selected_asset->get()->spr.dst_y, 0.1f);
     ImGui::DragFloat("wid", &m_selected_asset->get()->spr.wid, 0.1f);
     ImGui::DragFloat("hei", &m_selected_asset->get()->spr.hei, 0.1f);
+    if(ImGui::Button("Done")){
+      m_selected_asset = nullptr;
+    }
     ImGui::End();
   }
 
@@ -190,6 +193,7 @@ void Game::imgui_map() {
   for (auto &[key, value] : sprite_map) {
     if (ImGui::Button(key.c_str())) {
       selected_asset = key;
+      m_selected_asset = nullptr;
     }
   }
   ImGui::End();
