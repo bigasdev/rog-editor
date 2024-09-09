@@ -99,7 +99,16 @@ void Game::draw_ui() {
 
     for(int i = 0; i < w; i += invisible_ratio.x){
       for(int j = 0; j < h; j += invisible_ratio.y){
-        g_renderer->draw_rect({i, 100+j, static_cast<int>(invisible_ratio), static_cast<int>(invisible_ratio)}, {255, 255, 255, 255}, false);
+        auto mouse_hover = Mouse::is_at_area({i, 100+j, invisible_ratio.x, invisible_ratio.y}, g_engine->get_window_size()->x, g_engine->get_window_size()->y);
+        Logger::log(std::to_string(mouse_hover));
+        Col color = {255, 255, 255, 45};
+        auto fill = false;
+        if(mouse_hover){
+          color = {0, 255, 0, 85};
+          fill = true;
+        }
+
+        g_renderer->draw_rect({i, 100+j, static_cast<int>(invisible_ratio.x), static_cast<int>(invisible_ratio.y)}, color, fill);
       }
     }
   }
@@ -107,9 +116,13 @@ void Game::draw_ui() {
 
 void Game::imgui_assets() {}
 
+int x = 16;
+int y = 16;
 void Game::imgui_map() {
   ImGui::Begin("Assets");
-  ImGui::InputInt("Grid ratio", &grid_ratio);
+  ImGui::InputInt("Grid ratio x", &x);
+  ImGui::InputInt("Grid ratio y", &y);
+  grid_ratio = {static_cast<float>(x), static_cast<float>(y)};
   for (auto &[key, value] : sprite_map) {
     if (ImGui::Button(key.c_str())) {
       selected_asset = key;

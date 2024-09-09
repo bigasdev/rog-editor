@@ -6,8 +6,8 @@ bool Mouse::is_at_area(Rect pArea, int width, int height) {
   int x = 0, y = 0;
   SDL_GetMouseState(&x, &y);
 
-  int scaled_x = x * 64/width;
-  int scaled_y = y * 64/height;
+  int scaled_x = x;
+  int scaled_y = y;
   // explanation of the magic numbers:
   // 4 are used to smoothen the edge-case detection
   // 8x8 is the width of the default cursor
