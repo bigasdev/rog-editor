@@ -42,6 +42,7 @@ bool mouse_wheel_clicked;
 
 vec2 grid_ratio = {16, 16};
 vec2 invisible_ratio = {16, 16};
+float sprite_zoom = 3;
 
 bool save_pressed = false;
 
@@ -109,24 +110,45 @@ void Game::draw_ent() {
   if(m_selected_asset != nullptr){
     auto spr = m_selected_asset->get()->spr;
     auto tex = *g_res->get_texture(m_selected_asset->get()->file_name);
+    spr.scale_x = sprite_zoom;
+    spr.scale_y = sprite_zoom;
     g_renderer->draw(tex, spr, {0, 0});
   }
 }
 
 void Game::draw_ui() {
+}
+
+void Game::imgui_assets() {}
+
+int x = 16;
+int y = 16;
+void Game::imgui_map() {
+  ImGui::Begin("Assets");
+  int i = 0;
+  for(auto& asset : m_assets){
+    if (ImGui::Button(std::to_string(i).c_str())) {
+      m_selected_asset = &asset;
+    }
+    i++;
+  }
+  ImGui::End();
+
+  ImGui::SetNextWindowBgAlpha(0.15f);
+  ImGui::Begin("Test");
   if (selected_asset != "") {
     auto spr = sprite_map[selected_asset];
     GPU_Image* tex = *g_res->get_texture(selected_asset);
     spr.wid = tex->w;
     spr.hei = tex->h;
-    g_renderer->draw(tex, spr, {0, 100});
+    g_renderer->draw(tex, spr, {ImGui::GetWindowPos().x, ImGui::GetWindowPos().y+100});
 
     auto w = tex->w*g_camera->get_game_scale();
     auto h = tex->h*g_camera->get_game_scale();
 
     for(int i = 0; i < w; i += invisible_ratio.x){
       for(int j = 0; j < h; j += invisible_ratio.y){
-        auto mouse_hover = Mouse::is_at_area({i, 100+j, invisible_ratio.x, invisible_ratio.y}, g_engine->get_window_size()->x, g_engine->get_window_size()->y);
+        auto mouse_hover = Mouse::is_at_area({ImGui::GetWindowPos().x+i, j+ImGui::GetWindowPos().y+100, invisible_ratio.x, invisible_ratio.y}, g_engine->get_window_size()->x, g_engine->get_window_size()->y);
         Col color = {255, 255, 255, 45};
         auto fill = false;
 
@@ -152,26 +174,12 @@ void Game::draw_ui() {
         }
 
 
-        g_renderer->draw_rect({i, 100+j, static_cast<int>(invisible_ratio.x), static_cast<int>(invisible_ratio.y)}, color, fill);
+        g_renderer->draw_rect({ImGui::GetWindowPos().x+i, j+ImGui::GetWindowPos().y+100, static_cast<int>(invisible_ratio.x), static_cast<int>(invisible_ratio.y)}, color, fill);
       }
     }
   }
-}
-
-void Game::imgui_assets() {}
-
-int x = 16;
-int y = 16;
-void Game::imgui_map() {
-  ImGui::Begin("Assets");
-  int i = 0;
-  for(auto& asset : m_assets){
-    if (ImGui::Button(std::to_string(i).c_str())) {
-      m_selected_asset = &asset;
-    }
-    i++;
-  }
   ImGui::End();
+
 
   if(m_selected_asset != nullptr){
     ImGui::Begin("Selected asset");
@@ -189,6 +197,7 @@ void Game::imgui_map() {
   ImGui::Begin("Sprites");
   ImGui::InputInt("Grid ratio x", &x);
   ImGui::InputInt("Grid ratio y", &y);
+  ImGui::InputFloat("Sprite zoom", &sprite_zoom);
   grid_ratio = {static_cast<float>(x), static_cast<float>(y)};
   for (auto &[key, value] : sprite_map) {
     if (ImGui::Button(key.c_str())) {
