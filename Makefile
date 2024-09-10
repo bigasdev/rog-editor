@@ -13,7 +13,7 @@ RELEASE_FOLDER = .release
 ICON_DIR = res/icon/icon.res
 BIN = bin/*.o
 DEBUG_FLAGS = -D_ASSERTS -D_DEBUG -D_IMGUI
-GAME_FLAGS = -DWIN_WIDTH=400 -DWIN_HEIGHT=200 -DGAME_SCALE=1
+GAME_FLAGS = -D_IMGUI -DWIN_WIDTH=400 -DWIN_HEIGHT=200 -DGAME_SCALE=1
 
 bin_dir:
 	mkdir bin
@@ -51,7 +51,7 @@ bin/%.o: src/tools/%.cpp
 debug: imgui_o app_o entity_o renderer_o resources_o game_o tools_o
 	${CC} -g -O0 $(STATIC_LIBS) $(INCLUDES) -o $(DEBUG_FOLDER)/fortress.exe ${BIN} $(ICON_DIR) $(DEBUG_LIBS) -mconsole
 
-build: app_o entity_o renderer_o resources_o game_o tools_o
+build: imgui_o app_o entity_o renderer_o resources_o game_o tools_o
 	${CC} -s -O3 -finline-functions -flto $(STATIC_LIBS) $(INCLUDES) -o $(RELEASE_FOLDER)/${NAME}.exe ${BIN} $(ICON_DIR) $(LIBS)
 
 compile: bin_dir imgui_o app_o entity_o renderer_o resources_o game_o tools_o

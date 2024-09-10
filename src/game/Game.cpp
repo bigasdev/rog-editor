@@ -212,11 +212,6 @@ void Game::imgui_map() {
             spr.wid = grid_ratio.x;
             spr.hei = grid_ratio.y;
 
-            Logger::log("asset dst_x: " + std::to_string(spr.dst_x) +
-                        " dst_y: " + std::to_string(spr.dst_y) +
-                        " wid: " + std::to_string(spr.wid) +
-                        " hei: " + std::to_string(spr.hei));
-
             asset.spr = spr;
             m_assets.push_back(std::make_unique<Asset>(asset));
             mouse_clicked = false;
@@ -259,11 +254,6 @@ void Game::imgui_map() {
       m_selected_asset = nullptr;
     }
   }
-  ImGui::End();
-
-  ImGui::Begin("Mouse info");
-  ImGui::Text("Mouse pos: %f %f", mouse_pos.x, mouse_pos.y);
-  ImGui::Text("Mouse state : %d", mouse_clicked);
   ImGui::End();
 }
 

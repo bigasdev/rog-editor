@@ -1,15 +1,23 @@
 [
     {
-        "asset_name": "wag",
+        "asset_name": "bigas",
         "dst_x": 0.0,
         "dst_y": 0.0,
-        "file_name": "enemy_atlas",
+        "file_name": "character_atlas",
         "hei": 16.0,
         "wid": 16.0
     },
     {
-        "asset_name": "asset",
+        "asset_name": "stamina_potion",
         "dst_x": 0.0,
+        "dst_y": 0.0,
+        "file_name": "items_atlas",
+        "hei": 8.0,
+        "wid": 8.0
+    },
+    {
+        "asset_name": "health_potion",
+        "dst_x": 1.0,
         "dst_y": 0.0,
         "file_name": "items_atlas",
         "hei": 8.0,
