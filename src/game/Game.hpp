@@ -7,6 +7,8 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#include <iostream>
+
 class Camera;
 class Cooldown;
 
@@ -28,6 +30,7 @@ public:
   void clean();
 
   void save();
+  void load(std::string file_path);
 private:
 
   Camera *m_camera;

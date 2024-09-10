@@ -1,16 +1,18 @@
 [
     {
+        "asset_name": "wag",
         "dst_x": 0.0,
         "dst_y": 0.0,
-        "file_name": "character_atlas",
+        "file_name": "enemy_atlas",
         "hei": 16.0,
         "wid": 16.0
     },
     {
-        "dst_x": 1.5,
+        "asset_name": "asset",
+        "dst_x": 0.0,
         "dst_y": 0.0,
-        "file_name": "concept",
-        "hei": 16.0,
-        "wid": 16.0
+        "file_name": "items_atlas",
+        "hei": 8.0,
+        "wid": 8.0
     }
 ]
