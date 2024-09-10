@@ -89,6 +89,7 @@ void Game::update(double dt) {
 
   if (ctrl_pressed and load_project) {
     project_folder = Data_Loader::load_folder("Select project folder");
+    if(project_folder == "") return;
     g_res->reset_aseprites();
     g_res->load_aseprites(project_folder + "/res/");
     sprite_map.clear();
@@ -112,7 +113,8 @@ void Game::update(double dt) {
   }
 
   if (ctrl_pressed and load_assets) {
-    auto file_path = Data_Loader::load_file("json");
+    auto file_path = Data_Loader::load_file("*.json");
+    if(file_path == "") return;
     load(file_path);
     load_assets = false;
     ctrl_pressed = false;
@@ -230,7 +232,6 @@ void Game::imgui_map() {
 
   if (m_selected_asset != nullptr) {
     ImGui::Begin("Selected asset");
-    Logger::log("dst x " + std::to_string(m_selected_asset->get()->spr.dst_x));
     ImGui::InputText("asset_name", m_selected_asset->get()->asset_name,
                      IM_ARRAYSIZE(m_selected_asset->get()->asset_name));
     ImGui::DragFloat("dst_x", &m_selected_asset->get()->spr.dst_x, 0.1f);
@@ -284,6 +285,8 @@ void Game::load(std::string file_path) {
   std::ifstream i(file_path);
   nlohmann::json j;
   i >> j;
+  m_selected_asset = nullptr;
+  m_assets.clear();
 
   for (auto &asset_j : j) {
     Asset asset;
