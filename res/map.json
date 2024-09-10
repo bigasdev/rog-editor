@@ -17,7 +17,7 @@
     },
     {
         "asset_name": "health_potion",
-        "dst_x": 1.0,
+        "dst_x": 1.2999999523162842,
         "dst_y": 0.0,
         "file_name": "items_atlas",
         "hei": 8.0,

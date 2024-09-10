@@ -53,10 +53,35 @@ Aseprite: ui
 Loaded shader: res/shaders/light_vertex.glsl and res/shaders/newoutline.frag.glsl
 Game:1
 1
+C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/atlas.aseprite
+C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/character_atlas.aseprite
+C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/enemy_atlas.aseprite
+C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/framework.aseprite
+C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/game_scene.aseprite
+C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/items_atlas.aseprite
+C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/main.aseprite
+C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/main_scene.aseprite
+C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/map.aseprite
+Finished aseprite load!
+------------
+Aseprite: atlas
+Aseprite: character_atlas
+Aseprite: enemy_atlas
+Aseprite: framework
+Aseprite: game_scene
+Aseprite: items_atlas
+Aseprite: main
+Aseprite: main_scene
+Aseprite: map
+atlas
 character_atlas
-concept
-logo
-ui
+enemy_atlas
+framework
+game_scene
+items_atlas
+main
+main_scene
+map
 Game initialized
 Engine post init
 SDL2 quit

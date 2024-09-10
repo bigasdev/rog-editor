@@ -14,6 +14,7 @@
 #include "../tools/Math.hpp"
 #include "../tools/Mouse.hpp"
 #include "DataLoader.hpp"
+#include "Fini.hpp"
 #include "SDL.h"
 #include "SDL_gpu.h"
 #include "SDL_keycode.h"
@@ -30,6 +31,7 @@ struct Asset {
 };
 
 std::string project_folder;
+std::string asset_folder;
 Sprite test;
 vec2 pos = {0, 0};
 std::map<std::string, Sprite> sprite_map;
@@ -51,6 +53,8 @@ bool load_project = false;
 bool save_pressed = false;
 bool load_assets = false;
 
+Fini *fini;
+
 Game::Game() {}
 
 Game::~Game() {}
@@ -58,6 +62,23 @@ Game::~Game() {}
 void Game::init() {
   m_camera = new Camera(g_engine->get_window_size());
   m_cooldown = new Cooldown();
+
+  // initial settings to get last folder and asset
+  fini = new Fini("res/config.ini");
+  fini->initialize_value("last", "folder", "");
+  fini->initialize_value("last", "asset", "");
+
+  project_folder = fini->get_value<std::string>("last", "folder");
+
+  if (project_folder != "") {
+    g_res->reset_aseprites();
+    g_res->load_aseprites(project_folder + "/res/");
+  }
+
+  asset_folder = fini->get_value<std::string>("last", "asset");
+  if (asset_folder != "") {
+    load(asset_folder);
+  }
 
   g_cooldown = m_cooldown;
   g_camera = m_camera;
@@ -89,7 +110,9 @@ void Game::update(double dt) {
 
   if (ctrl_pressed and load_project) {
     project_folder = Data_Loader::load_folder("Select project folder");
-    if(project_folder == "") return;
+    if (project_folder == "")
+      return;
+    fini->set_value("last", "folder", project_folder);
     g_res->reset_aseprites();
     g_res->load_aseprites(project_folder + "/res/");
     sprite_map.clear();
@@ -114,8 +137,10 @@ void Game::update(double dt) {
 
   if (ctrl_pressed and load_assets) {
     auto file_path = Data_Loader::load_file("*.json");
-    if(file_path == "") return;
+    if (file_path == "")
+      return;
     load(file_path);
+    fini->set_value("last", "asset", file_path);
     load_assets = false;
     ctrl_pressed = false;
   }
@@ -264,7 +289,6 @@ void Game::draw_imgui() {
 
 void Game::save() {
   nlohmann::json j;
-  Logger::log("Saving map");
   for (auto &asset : m_assets) {
     nlohmann::json asset_j;
     asset_j["asset_name"] = asset->asset_name;
@@ -276,9 +300,16 @@ void Game::save() {
 
     j.push_back(asset_j);
   }
-  std::ofstream o("res/map.json");
-  o << std::setw(4) << j << std::endl;
-  o.close();
+  std::ofstream o;
+  if (asset_folder == "") {
+    std::ofstream o("res/map.json");
+    o << std::setw(4) << j << std::endl;
+    o.close();
+  } else {
+    std::ofstream o(asset_folder);
+    o << std::setw(4) << j << std::endl;
+    o.close();
+  }
 }
 
 void Game::load(std::string file_path) {
@@ -302,4 +333,4 @@ void Game::load(std::string file_path) {
   }
 }
 
-void Game::clean() {}
+void Game::clean() { delete fini; }
