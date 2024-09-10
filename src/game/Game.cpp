@@ -24,6 +24,7 @@
 #include "json.hpp"
 
 struct Asset{
+  char asset_name[128] = "asset";
   std::string file_name;
   Sprite spr;
 };
@@ -35,6 +36,7 @@ std::map<std::string, Sprite> sprite_map;
 std::vector<std::unique_ptr<Asset>> m_assets;
 std::unique_ptr<Asset>* m_selected_asset;
 std::string selected_asset;
+std::string current_asset = "asset";
 
 vec2 mouse_pos;
 bool mouse_clicked;
@@ -125,23 +127,22 @@ void Game::draw_ent() {
 void Game::draw_ui() {
 }
 
+
 void Game::imgui_assets() {}
 
 int x = 16;
 int y = 16;
 void Game::imgui_map() {
   ImGui::Begin("Assets");
-  int i = 0;
   for(auto& asset : m_assets){
-    if (ImGui::Button(std::to_string(i).c_str())) {
+    if (ImGui::Button(asset.get()->asset_name)) {
       m_selected_asset = &asset;
     }
-    i++;
   }
   ImGui::End();
 
   ImGui::SetNextWindowBgAlpha(0.15f);
-  ImGui::Begin("Test");
+  ImGui::Begin("Atlas");
   if (selected_asset != "") {
     auto spr = sprite_map[selected_asset];
     GPU_Image* tex = *g_res->get_texture(selected_asset);
@@ -163,6 +164,8 @@ void Game::imgui_map() {
           fill = true;
 
           if(mouse_clicked){
+            if(m_selected_asset != nullptr) m_selected_asset = nullptr;
+
             Asset asset;
             asset.file_name = selected_asset;
             Sprite spr;
@@ -190,6 +193,7 @@ void Game::imgui_map() {
   if(m_selected_asset != nullptr){
     ImGui::Begin("Selected asset");
     Logger::log("dst x " + std::to_string(m_selected_asset->get()->spr.dst_x));
+    ImGui::InputText("asset_name", m_selected_asset->get()->asset_name, IM_ARRAYSIZE(m_selected_asset->get()->asset_name));
     ImGui::DragFloat("dst_x", &m_selected_asset->get()->spr.dst_x, 0.1f);
     ImGui::DragFloat("dst_y", &m_selected_asset->get()->spr.dst_y, 0.1f);
     ImGui::DragFloat("wid", &m_selected_asset->get()->spr.wid, 0.1f);
@@ -228,6 +232,7 @@ void Game::save(){
   Logger::log("Saving map");
   for(auto& asset : m_assets){
     nlohmann::json asset_j;
+    asset_j["asset_name"] = asset->asset_name;
     asset_j["file_name"] = asset->file_name;
     asset_j["dst_x"] = asset->spr.dst_x;
     asset_j["dst_y"] = asset->spr.dst_y;
