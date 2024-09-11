@@ -60,6 +60,8 @@ bool load_project = false;
 bool save_pressed = false;
 bool load_assets = false;
 
+SpriteAnimator *m_sprite_animator;
+
 Fini *fini;
 
 Game::Game() {}
@@ -109,12 +111,27 @@ void Game::init() {
   g_input_manager->bind_keyboard(SDLK_p, &load_assets);
   g_input_manager->bind_keyboard(SDLK_e, &load_project);
   g_input_manager->bind_keyboard(SDLK_LCTRL, &ctrl_pressed);
+
+  //test stuff 
+  m_sprite_animator = new SpriteAnimator(Sprite());
+  SpriteFrame frame;
+  frame.max_frames = 3;
+  frame.frame_timer = 0.16f;
+  frame.loop = true;
+  SpriteFrame frame2;
+  frame2.max_frames = 6;
+  frame2.frame_timer = 0.16f;
+  frame2.loop = true;
+
+  m_sprite_animator->register_anim(frame, &mouse_clicked);
+  m_sprite_animator->register_anim(frame2, &mouse_wheel_clicked);
 }
 
 void Game::fixed_update(double tmod) {}
 
 void Game::update(double dt) {
   m_cooldown->update(dt);
+  m_sprite_animator->update(dt);
 
   invisible_ratio = grid_ratio * g_camera->get_game_scale();
 

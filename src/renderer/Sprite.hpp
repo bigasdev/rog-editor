@@ -5,10 +5,13 @@
 #include "../tools/Common.hpp"
 #include <map>
 
+// the sprite frame will assigned to the dst_x and dst_y variables of the sprite
 struct SpriteFrame{
   int x, y;
-  int frames;
+  int frame;
+  int max_frames;
   float frame_timer = 0.16f;
+  bool loop = true;
 };
 
 struct Sprite{
