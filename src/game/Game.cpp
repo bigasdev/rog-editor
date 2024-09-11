@@ -77,6 +77,8 @@ void Game::init() {
 
   project_folder = fini->get_value<std::string>("last", "folder");
 
+  // this will crash if the saved folder or assets are not found anymore
+  // FIX: 
   if (project_folder != "") {
     g_res->reset_aseprites();
     g_res->load_aseprites(project_folder + "/res/");
@@ -99,6 +101,7 @@ void Game::init() {
     sprite_map[file] = spr;
   }
 
+  // basic camera tracking to make everything in the middle of the screen
   g_camera->track_pos(&pos);
 
   g_input_manager->bind_mouse(&mouse_clicked, nullptr, &mouse_wheel_clicked);
