@@ -24,15 +24,22 @@
 #include <memory>
 #include <string>
 
+struct Animation{
+  std::string name;
+  int starting_x = 0;
+  int frames = 0;
+  float frame_speed = 0.0f;
+};
+
 struct Asset {
   char asset_name[128] = "asset";
   std::string file_name;
   Sprite spr;
+  std::vector<Animation> animations;
 };
 
 std::string project_folder;
 std::string asset_folder;
-Sprite test;
 vec2 pos = {0, 0};
 std::map<std::string, Sprite> sprite_map;
 std::vector<std::unique_ptr<Asset>> m_assets;
@@ -108,6 +115,7 @@ void Game::update(double dt) {
 
   invisible_ratio = grid_ratio * g_camera->get_game_scale();
 
+  // LOAD PROJECT FOLDER
   if (ctrl_pressed and load_project) {
     project_folder = Data_Loader::load_folder("Select project folder");
     if (project_folder == "")
@@ -129,12 +137,15 @@ void Game::update(double dt) {
     load_project = false;
     ctrl_pressed = false;
   }
+
+  // SAVE ASSETS
   if (ctrl_pressed and save_pressed) {
     save();
     save_pressed = false;
     ctrl_pressed = false;
   }
 
+  // LOAD ASSETS
   if (ctrl_pressed and load_assets) {
     auto file_path = Data_Loader::load_file("*.json");
     if (file_path == "")
@@ -152,22 +163,21 @@ void Game::post_update(double dt) {
 }
 
 void Game::draw_root() {
-  // draws the background of the sprite showing the current grid ratio
-  // respecting the zoom
+  // draws the background of the sprite showing the current grid ratio respecting the zoom
   g_renderer->draw_rect(
-      {0, 0, grid_ratio.x * sprite_zoom, grid_ratio.y * sprite_zoom},
+      {0, 0, static_cast<int>(grid_ratio.x * sprite_zoom), static_cast<int>(grid_ratio.y * sprite_zoom)},
       {255, 255, 255, 55}, true);
-  g_renderer->draw_line({0, (grid_ratio.y * sprite_zoom) + 8,
-                         grid_ratio.x * sprite_zoom,
-                         (grid_ratio.y * sprite_zoom) + 8},
+  g_renderer->draw_line({0, static_cast<int>((grid_ratio.y * sprite_zoom)) + 8,
+                         static_cast<int>(grid_ratio.x * sprite_zoom),
+                         static_cast<int>((grid_ratio.y * sprite_zoom) + 8)},
                         {255, 255, 255, 255});
   g_renderer->draw_text(
       {0, (grid_ratio.y * sprite_zoom) + 10},
       (std::to_string((grid_ratio.x * sprite_zoom)) + " px").c_str(),
       g_res->get_font("arial"), {255, 255, 255, 255});
-  g_renderer->draw_line({(grid_ratio.x * sprite_zoom) + 8, 0,
-                         (grid_ratio.x * sprite_zoom) + 8,
-                         grid_ratio.y * sprite_zoom},
+  g_renderer->draw_line({static_cast<int>((grid_ratio.x * sprite_zoom) + 8), 0,
+                         static_cast<int>((grid_ratio.x * sprite_zoom) + 8),
+                         static_cast<int>(grid_ratio.y * sprite_zoom)},
                         {255, 255, 255, 255});
   g_renderer->draw_text(
       {(grid_ratio.x * sprite_zoom) + 10, 0},
@@ -193,6 +203,7 @@ void Game::imgui_assets() {}
 int x = 16;
 int y = 16;
 void Game::imgui_map() {
+  //menu that contains all the assets found in the project .json
   ImGui::Begin("Assets");
   for (auto &asset : m_assets) {
     if (ImGui::Button(asset.get()->asset_name)) {
@@ -201,6 +212,7 @@ void Game::imgui_map() {
   }
   ImGui::End();
 
+  //atlas menu, this is where the selected atlas will be shown
   ImGui::SetNextWindowBgAlpha(0.15f);
   ImGui::Begin("Atlas");
   if (selected_asset != "") {
@@ -214,11 +226,12 @@ void Game::imgui_map() {
     auto w = tex->w * g_camera->get_game_scale();
     auto h = tex->h * g_camera->get_game_scale();
 
+    //loop used to create the grids around the texture respecting the zoom
     for (int i = 0; i < w; i += invisible_ratio.x) {
       for (int j = 0; j < h; j += invisible_ratio.y) {
         auto mouse_hover = Mouse::is_at_area(
-            {ImGui::GetWindowPos().x + i, j + ImGui::GetWindowPos().y + 100,
-             invisible_ratio.x, invisible_ratio.y},
+            {static_cast<int>(ImGui::GetWindowPos().x + i), static_cast<int>(j + ImGui::GetWindowPos().y + 100),
+             static_cast<int>(invisible_ratio.x), static_cast<int>(invisible_ratio.y)},
             g_engine->get_window_size()->x, g_engine->get_window_size()->y);
         Col color = {255, 255, 255, 45};
         auto fill = false;
@@ -245,8 +258,8 @@ void Game::imgui_map() {
           }
         }
 
-        g_renderer->draw_rect({ImGui::GetWindowPos().x + i,
-                               j + ImGui::GetWindowPos().y + 100,
+        g_renderer->draw_rect({static_cast<int>(ImGui::GetWindowPos().x + i),
+                               static_cast<int>(j + ImGui::GetWindowPos().y + 100),
                                static_cast<int>(invisible_ratio.x),
                                static_cast<int>(invisible_ratio.y)},
                               color, fill);
@@ -255,6 +268,7 @@ void Game::imgui_map() {
   }
   ImGui::End();
 
+  //asset menu that is used to add animations and control the size and position of the asset
   if (m_selected_asset != nullptr) {
     ImGui::Begin("Selected asset");
     ImGui::InputText("asset_name", m_selected_asset->get()->asset_name,
@@ -269,6 +283,8 @@ void Game::imgui_map() {
     ImGui::End();
   }
 
+  //the sprites menu, this will have all the avaliable atlases to select 
+  //it contains all the control variables as well
   ImGui::Begin("Sprites");
   ImGui::InputInt("Grid ratio x", &x);
   ImGui::InputInt("Grid ratio y", &y);
