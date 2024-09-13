@@ -50,6 +50,7 @@ std::string current_asset = "asset";
 vec2 mouse_pos;
 bool mouse_clicked;
 bool mouse_wheel_clicked;
+bool mouse_not_clicked;
 
 vec2 grid_ratio = {16, 16};
 vec2 invisible_ratio = {16, 16};
@@ -113,18 +114,31 @@ void Game::init() {
   g_input_manager->bind_keyboard(SDLK_LCTRL, &ctrl_pressed);
 
   //test stuff 
+  //TODO: create a note or a doc about how the animation works before cleaning this up..
   m_sprite_animator = new SpriteAnimator(Sprite());
   SpriteFrame frame;
+  frame.name = "movement";
   frame.max_frames = 3;
   frame.frame_timer = 0.16f;
   frame.loop = true;
+  frame.state = &mouse_clicked;
   SpriteFrame frame2;
+  frame2.name = "click";
   frame2.max_frames = 6;
-  frame2.frame_timer = 0.16f;
-  frame2.loop = true;
+  frame2.frame_timer = 0.46f;
+  frame2.loop = false;
+  frame2.block_transition = true;
+  frame2.state = &mouse_wheel_clicked;
+  SpriteFrame frame3;
+  frame3.name = "idle";
+  frame3.max_frames = 5;
+  frame3.frame_timer = 0.16f;
+  frame3.loop = true;
+  frame3.state = &mouse_not_clicked;
 
-  m_sprite_animator->register_anim(frame, &mouse_clicked);
-  m_sprite_animator->register_anim(frame2, &mouse_wheel_clicked);
+  m_sprite_animator->register_anim(frame);
+  m_sprite_animator->register_anim(frame3);
+  m_sprite_animator->register_anim(frame2);
 }
 
 void Game::fixed_update(double tmod) {}
@@ -132,6 +146,8 @@ void Game::fixed_update(double tmod) {}
 void Game::update(double dt) {
   m_cooldown->update(dt);
   m_sprite_animator->update(dt);
+
+  mouse_not_clicked = !mouse_clicked;
 
   invisible_ratio = grid_ratio * g_camera->get_game_scale();
 
