@@ -27,8 +27,9 @@
 struct Animation{
   std::string name;
   int starting_x = 0;
+  int starting_y = 0;
   int frames = 0;
-  float frame_speed = 0.0f;
+  float frame_speed = 0.16f;
 };
 
 struct Asset {
@@ -72,6 +73,8 @@ Game::~Game() {}
 void Game::init() {
   m_camera = new Camera(g_engine->get_window_size());
   m_cooldown = new Cooldown();
+
+  //
 
   // initial settings to get last folder and asset
   fini = new Fini("res/config.ini");
@@ -313,6 +316,17 @@ void Game::imgui_map() {
     ImGui::DragFloat("dst_y", &m_selected_asset->get()->spr.dst_y, 0.1f);
     ImGui::DragFloat("wid", &m_selected_asset->get()->spr.wid, 0.1f);
     ImGui::DragFloat("hei", &m_selected_asset->get()->spr.hei, 0.1f);
+    for(auto &anim : m_selected_asset->get()->animations){
+      ImGui::InputText("#name", &anim.name[0], anim.name.size());
+      ImGui::InputInt("#starting_x", &anim.starting_x);
+      ImGui::InputInt("#starting_y", &anim.starting_y);
+      ImGui::InputInt("#frames", &anim.frames);
+      ImGui::InputFloat("#frame_speed", &anim.frame_speed);
+    }
+    if(ImGui::Button("Add animation")){
+      Animation anim;
+      m_selected_asset->get()->animations.push_back(anim);
+    }
     if (ImGui::Button("Done")) {
       m_selected_asset = nullptr;
     }

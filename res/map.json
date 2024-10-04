@@ -1,26 +1,18 @@
 [
     {
-        "asset_name": "bigas",
-        "dst_x": 0.0,
-        "dst_y": 0.0,
-        "file_name": "character_atlas",
+        "asset_name": "teste",
+        "dst_x": 0.30000001192092896,
+        "dst_y": 1.2000000476837158,
+        "file_name": "concept",
+        "hei": 8.0,
+        "wid": 8.0
+    },
+    {
+        "asset_name": "asset",
+        "dst_x": 20.700000762939453,
+        "dst_y": 3.299999952316284,
+        "file_name": "concept",
         "hei": 16.0,
         "wid": 16.0
-    },
-    {
-        "asset_name": "stamina_potion",
-        "dst_x": 0.0,
-        "dst_y": 0.0,
-        "file_name": "items_atlas",
-        "hei": 8.0,
-        "wid": 8.0
-    },
-    {
-        "asset_name": "health_potion",
-        "dst_x": 1.2999999523162842,
-        "dst_y": 0.0,
-        "file_name": "items_atlas",
-        "hei": 8.0,
-        "wid": 8.0
     }
 ]
