@@ -12,8 +12,12 @@ Loading font: 6px
 Loaded font: res/font\6px.ttf
 Loading font: arial
 Loaded font: res/font\arial.TTF
+Loading font: blueterm
+Loaded font: res/font\blueterm.ttf
 Loading font: code8
 Loaded font: res/font\code8.ttf
+Loading font: gohu11
+Loaded font: res/font\gohu11.ttf
 Loading font: jetbrains
 Loaded font: res/font\jetbrains.ttf
 Loading font: Licence
@@ -53,24 +57,23 @@ Aseprite: ui
 Loaded shader: res/shaders/light_vertex.glsl and res/shaders/newoutline.frag.glsl
 Game:1
 1
-C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/atlas.aseprite
-C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/character_atlas.aseprite
-C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/enemy_atlas.aseprite
-C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/framework.aseprite
-C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/game_scene.aseprite
-C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/items_atlas.aseprite
-C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/main.aseprite
-C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/main_scene.aseprite
-C:\Users\Escritorio2\Documents\.code\journey-roguelike/res/map.aseprite
+C:\Users\Escritorio2\Documents\.code\rog/res/character_atlas.aseprite
+C:\Users\Escritorio2\Documents\.code\rog/res/concept.aseprite
+C:\Users\Escritorio2\Documents\.code\rog/res/items_atlas.aseprite
+C:\Users\Escritorio2\Documents\.code\rog/res/logo.aseprite
+C:\Users\Escritorio2\Documents\.code\rog/res/ui.aseprite
 Finished aseprite load!
 ------------
-Aseprite: atlas
 Aseprite: character_atlas
-Aseprite: enemy_atlas
-Aseprite: framework
-Aseprite: game_scene
+Aseprite: concept
 Aseprite: items_atlas
-Aseprite: main
-Aseprite: main_scene
-Aseprite: map
+Aseprite: logo
+Aseprite: ui
+character_atlas
+concept
+items_atlas
+logo
+ui
+Game initialized
+Engine post init
 ERROR: Signal: 22

@@ -253,7 +253,7 @@ void Game::imgui_map() {
 
   //atlas menu, this is where the selected atlas will be shown
   ImGui::SetNextWindowBgAlpha(0.15f);
-  ImGui::Begin("Atlas");
+  ImGui::Begin("  Atlas");
   if (selected_asset != "") {
     auto spr = sprite_map[selected_asset];
     GPU_Image *tex = *g_res->get_texture(selected_asset);
@@ -317,11 +317,11 @@ void Game::imgui_map() {
     ImGui::DragFloat("wid", &m_selected_asset->get()->spr.wid, 0.1f);
     ImGui::DragFloat("hei", &m_selected_asset->get()->spr.hei, 0.1f);
     for(auto &anim : m_selected_asset->get()->animations){
-      ImGui::InputText("#name", &anim.name[0], anim.name.size());
-      ImGui::InputInt("#starting_x", &anim.starting_x);
-      ImGui::InputInt("#starting_y", &anim.starting_y);
-      ImGui::InputInt("#frames", &anim.frames);
-      ImGui::InputFloat("#frame_speed", &anim.frame_speed);
+      ImGui::InputText("name", &anim.name[0], anim.name.size());
+      ImGui::InputInt("starting_x", &anim.starting_x);
+      ImGui::InputInt("starting_y", &anim.starting_y);
+      ImGui::InputInt("frames", &anim.frames);
+      ImGui::InputFloat("frame_speed", &anim.frame_speed);
     }
     if(ImGui::Button("Add animation")){
       Animation anim;

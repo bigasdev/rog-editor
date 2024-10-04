@@ -5,10 +5,12 @@
 #include "../ImGui/imgui_impl_sdlrenderer.h"
 #include "../imgui/imgui_impl_opengl3.h"
 
-SDL_Window* GUI::gui_window = nullptr;
+SDL_Window *GUI::gui_window = nullptr;
 SDL_GLContext GUI::gui_renderer = nullptr;
 
-void GUI::setup(SDL_Window *window, SDL_GLContext& renderer) {
+ImFont* font = nullptr;
+
+void GUI::setup(SDL_Window *window, SDL_GLContext &renderer) {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO &io = ImGui::GetIO();
@@ -35,8 +37,14 @@ void GUI::setup(SDL_Window *window, SDL_GLContext& renderer) {
   // style.Colors[ImGuiCol_TitleBg] = ImVec4{0.25f, 0.29f, 0.43f, 1.0f};
   // style.Colors[ImGuiCol_TitleBgActive] = ImVec4{0.34f, 0.43f, 0.25f, 1.0f};
 
-  // adding custom font
-  io.Fonts->AddFontFromFileTTF("res/font/pixolleta.ttf", 10);
+  io.Fonts->AddFontDefault();
+
+  // Add character ranges and merge into main font
+  static ImWchar ranges[] = {0xf000, 0xf3ff, 0};
+  ImFontConfig config;
+  config.MergeMode = true; // adding custom font
+  font = io.Fonts->AddFontFromFileTTF("res/font/blueterm.ttf", 12, &config, ranges);
+  
 
   // ImGui::StyleColorsDark();
 
@@ -54,6 +62,7 @@ void GUI::draw(std::function<void()> function) {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplSDL2_NewFrame(GUI::gui_window);
   ImGui::NewFrame();
+  ImGui::PushFont(font);
 
   // add here our GUI render
   {
@@ -71,6 +80,7 @@ void GUI::draw(std::function<void()> function) {
   }
 
   // rendering
+  ImGui::PopFont();
   ImGui::Render();
   SDL_GL_MakeCurrent(GUI::gui_window, GUI::gui_renderer);
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -89,13 +99,13 @@ void GUI::set_focus() {
   if (!ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
     ImGui::SetKeyboardFocusHere(0);
 }
-#else 
+#else
 #include "AppGui.hpp"
 
-SDL_Window* GUI::gui_window = nullptr;
+SDL_Window *GUI::gui_window = nullptr;
 SDL_GLContext GUI::gui_renderer = nullptr;
 
-void GUI::setup(SDL_Window *window, SDL_GLContext& renderer) {}
+void GUI::setup(SDL_Window *window, SDL_GLContext &renderer) {}
 void GUI::event(SDL_Event event) {}
 void GUI::draw(std::function<void()> function) {}
 void GUI::clean() {}
