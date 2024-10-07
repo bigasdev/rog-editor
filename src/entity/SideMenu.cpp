@@ -25,7 +25,7 @@ SideMenu::SideMenu(){
 }
 
 void SideMenu::show(){
-  ImGui::SetNextWindowPos(ImVec2(0, 0));
+  ImGui::SetNextWindowPos(ImVec2(0, 40));
   ImGui::Begin("Side Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
   ImGui::Button("");
   

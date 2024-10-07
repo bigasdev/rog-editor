@@ -24,7 +24,9 @@
 #include <memory>
 #include <string>
 
+//Components
 #include "../entity/SideMenu.hpp"
+#include "../entity/MainMenu.hpp"
 
 struct Animation {
   std::string name;
@@ -67,7 +69,10 @@ bool load_assets = false;
 SpriteAnimator *m_sprite_animator;
 
 Fini *fini;
-SideMenu *side_menu;
+
+//Components
+std::unique_ptr<SideMenu> side_menu;
+std::unique_ptr<MainMenu> main_menu;
 
 Game::Game() {}
 
@@ -77,7 +82,8 @@ void Game::init() {
   m_camera = new Camera(g_engine->get_window_size());
   m_cooldown = new Cooldown();
 
-  side_menu = new SideMenu();
+  side_menu = std::make_unique<SideMenu>(); 
+  main_menu = std::make_unique<MainMenu>();
 
   //
 
@@ -249,6 +255,8 @@ void Game::imgui_assets() {}
 int x = 16;
 int y = 16;
 void Game::imgui_map() {
+  // top main menu bar
+  main_menu->show();
   // side menu which controls the state of the app, so we can have different
   // views
   side_menu->show();
