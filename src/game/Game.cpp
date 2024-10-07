@@ -24,6 +24,8 @@
 #include <memory>
 #include <string>
 
+#include "../entity/SideMenu.hpp"
+
 struct Animation{
   std::string name;
   int starting_x = 0;
@@ -65,6 +67,7 @@ bool load_assets = false;
 SpriteAnimator *m_sprite_animator;
 
 Fini *fini;
+SideMenu *side_menu;
 
 Game::Game() {}
 
@@ -73,6 +76,8 @@ Game::~Game() {}
 void Game::init() {
   m_camera = new Camera(g_engine->get_window_size());
   m_cooldown = new Cooldown();
+
+  side_menu = new SideMenu();
 
   //
 
@@ -250,6 +255,8 @@ void Game::imgui_map() {
     }
   }
   ImGui::End();
+
+  side_menu->show();
 
   //atlas menu, this is where the selected atlas will be shown
   ImGui::SetNextWindowBgAlpha(0.15f);
