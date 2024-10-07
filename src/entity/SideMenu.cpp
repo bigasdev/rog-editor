@@ -11,9 +11,10 @@
 GPU_Image* sdl_img;
 GPU_TextureHandle t;
 
-//HACK: Remember this is how we can load images to the dear imgui, we load from gpu and then get the texture handle
+//NOTE: Remember this is how we can load images to the dear imgui, we load from gpu and then get the texture handle
 SideMenu::SideMenu(){
   sdl_img = GPU_LoadImage("res/sprites/icons/global.png");
+  GPU_SetImageFilter(sdl_img, GPU_FILTER_NEAREST);
   t = GPU_GetTextureHandle(sdl_img);
   std::cout << t << std::endl;
   if(sdl_img == nullptr){
@@ -28,6 +29,7 @@ void SideMenu::show(){
   ImGui::Begin("Side Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
   ImGui::Button("");
   
+  ImGui::ImageButton("hello", (void*)(intptr_t)t, ImVec2(48, 48));
   ImGui::ImageButton("hello", (void*)(intptr_t)t, ImVec2(16, 16));
   ImGui::End();
 }
