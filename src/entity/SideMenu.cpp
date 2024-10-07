@@ -29,8 +29,13 @@ void SideMenu::show(){
   ImGui::Begin("Side Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
   ImGui::Button("");
   
-  ImGui::ImageButton("hello", (void*)(intptr_t)t, ImVec2(48, 48));
-  ImGui::ImageButton("hello", (void*)(intptr_t)t, ImVec2(16, 16));
+  if(ImGui::ImageButton("assets", (void*)(intptr_t)t, ImVec2(48, 48))){
+
+    m_state = State::ASSET;
+  }
+  if(ImGui::ImageButton("none", (void*)(intptr_t)t, ImVec2(48, 48))){
+    m_state = State::NONE;
+  }
   ImGui::End();
 }
 
