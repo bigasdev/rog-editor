@@ -53,6 +53,7 @@ public:
 
   //getters 
   Renderer *get_renderer() { return m_renderer; }
+  SDL_Renderer *get_sdl_renderer() { return m_sdl_renderer; }
   vec2* get_window_size() { return &m_window_size; }
 };
 

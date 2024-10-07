@@ -68,8 +68,8 @@ void GUI::draw(std::function<void()> function) {
   {
     if (function)
       function();
-    /*bool isOpen = true;
-    ImGui::ShowDemoWindow(&isOpen);*/
+    bool isOpen = true;
+    ImGui::ShowDemoWindow(&isOpen);
 
     // example of a window
     /*
