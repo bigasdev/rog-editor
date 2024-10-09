@@ -1,7 +1,5 @@
 SDL2 initialized
 SDL2 version: SDL-release-2.28.4-0-gcc016b004
-SDL2 renderer created
-SDL2 GPU created
 SDL2 image initialized
 SDL2 mixer initialized
 SDL2 window created

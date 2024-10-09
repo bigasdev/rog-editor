@@ -25,9 +25,11 @@ SideMenu::SideMenu(){
 }
 
 void SideMenu::show(){
-  ImGui::SetNextWindowPos(ImVec2(0, 40));
-  ImGui::Begin("Side Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
-  ImGui::Button("");
+  ImGui::SetNextWindowPos(ImVec2(0, 18.5f));
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+  ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 0);
+  ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1, 0.1, 0.1, 1.0));
+  ImGui::BeginChild("SideMenu", ImVec2(69, g_engine->get_window_size()->y), true);
   
   if(ImGui::ImageButton("assets", (void*)(intptr_t)t, ImVec2(48, 48))){
 
@@ -36,6 +38,9 @@ void SideMenu::show(){
   if(ImGui::ImageButton("none", (void*)(intptr_t)t, ImVec2(48, 48))){
     m_state = State::NONE;
   }
-  ImGui::End();
+  ImGui::PopStyleVar();
+  ImGui::PopStyleVar();
+  ImGui::PopStyleColor();
+  ImGui::EndChild();
 }
 

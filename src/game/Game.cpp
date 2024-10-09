@@ -258,11 +258,16 @@ void Game::imgui_assets() {}
 int x = 16;
 int y = 16;
 void Game::imgui_map() {
-  // top main menu bar
-  main_menu->show();
-  // side menu which controls the state of the app, so we can have different
-  // views
+  ImGui::SetNextWindowPos(ImVec2(0, 0));
+  ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1, 0.1, 0.1, 0.0));
+  ImGui::SetNextWindowSize(ImVec2(g_engine->get_window_size()->x, g_engine->get_window_size()->y));
+  ImGui::Begin("Workspace", nullptr,
+               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoScrollbar);
+
   side_menu->show();
+  // -- 
+  main_menu->show();
 
   if (side_menu->get_state() == State::ASSET) {
     // info bar that shows the mouse position
@@ -378,6 +383,8 @@ void Game::imgui_map() {
     }
     ImGui::End();
   }
+  ImGui::PopStyleColor();
+  ImGui::End();
 }
 
 void Game::draw_imgui() {
