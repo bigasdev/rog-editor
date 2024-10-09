@@ -27,7 +27,6 @@
 //Components
 #include "../entity/SideMenu.hpp"
 #include "../entity/MainMenu.hpp"
-#include "../entity/InfoBar.hpp"
 #include "../entity/AssetView.hpp"
 
 struct Animation {
@@ -74,7 +73,6 @@ Fini *fini;
 
 //Components
 std::unique_ptr<SideMenu> side_menu;
-std::unique_ptr<InfoBar> info_bar;
 std::unique_ptr<MainMenu> main_menu;
 std::unique_ptr<AssetView> asset_view;
 
@@ -87,7 +85,6 @@ void Game::init() {
   m_cooldown = new Cooldown();
 
   side_menu = std::make_unique<SideMenu>(); 
-  info_bar = std::make_unique<InfoBar>();
   main_menu = std::make_unique<MainMenu>();
   asset_view = std::make_unique<AssetView>();
 
@@ -245,13 +242,9 @@ void Game::imgui_map() {
 
   if(side_menu->get_state() == State::ASSET){
     asset_view->show();
-
-    info_bar->show();
   }
 
   if (side_menu->get_state() == State::NONE) {
-    // info bar that shows the mouse position
-    info_bar->show();
 
     // menu that contains all the assets found in the project .json
     ImGui::Begin("Assets");
