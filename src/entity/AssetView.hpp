@@ -11,5 +11,6 @@ public:
 
     void show();
 private:
+    void atlas();
     void pallete();
 };
