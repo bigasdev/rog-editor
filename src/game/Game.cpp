@@ -28,6 +28,7 @@
 #include "../entity/SideMenu.hpp"
 #include "../entity/MainMenu.hpp"
 #include "../entity/InfoBar.hpp"
+#include "../entity/AssetView.hpp"
 
 struct Animation {
   std::string name;
@@ -75,6 +76,7 @@ Fini *fini;
 std::unique_ptr<SideMenu> side_menu;
 std::unique_ptr<InfoBar> info_bar;
 std::unique_ptr<MainMenu> main_menu;
+std::unique_ptr<AssetView> asset_view;
 
 Game::Game() {}
 
@@ -87,6 +89,7 @@ void Game::init() {
   side_menu = std::make_unique<SideMenu>(); 
   info_bar = std::make_unique<InfoBar>();
   main_menu = std::make_unique<MainMenu>();
+  asset_view = std::make_unique<AssetView>();
 
   //
 
@@ -217,38 +220,9 @@ void Game::post_update(double dt) {
 }
 
 void Game::draw_root() {
-  // draws the background of the sprite showing the current grid ratio
-  // respecting the zoom
-  g_renderer->draw_rect({0, 0, static_cast<int>(grid_ratio.x * sprite_zoom),
-                         static_cast<int>(grid_ratio.y * sprite_zoom)},
-                        {255, 255, 255, 55}, true);
-  g_renderer->draw_line({0, static_cast<int>((grid_ratio.y * sprite_zoom)) + 8,
-                         static_cast<int>(grid_ratio.x * sprite_zoom),
-                         static_cast<int>((grid_ratio.y * sprite_zoom) + 8)},
-                        {255, 255, 255, 255});
-  g_renderer->draw_text(
-      {0, (grid_ratio.y * sprite_zoom) + 10},
-      (std::to_string((grid_ratio.x * sprite_zoom)) + " px").c_str(),
-      g_res->get_font("arial"), {255, 255, 255, 255});
-  g_renderer->draw_line({static_cast<int>((grid_ratio.x * sprite_zoom) + 8), 0,
-                         static_cast<int>((grid_ratio.x * sprite_zoom) + 8),
-                         static_cast<int>(grid_ratio.y * sprite_zoom)},
-                        {255, 255, 255, 255});
-  g_renderer->draw_text(
-      {(grid_ratio.x * sprite_zoom) + 10, 0},
-      (std::to_string((grid_ratio.y * sprite_zoom)) + " px").c_str(),
-      g_res->get_font("arial"), {255, 255, 255, 255});
 }
 
 void Game::draw_ent() {
-  // draws the selected sprite in the screen respecting the sprite zoom
-  if (m_selected_asset != nullptr) {
-    auto spr = m_selected_asset->get()->spr;
-    auto tex = *g_res->get_texture(m_selected_asset->get()->file_name);
-    spr.scale_x = sprite_zoom;
-    spr.scale_y = sprite_zoom;
-    g_renderer->draw(tex, spr, {0, 0});
-  }
 }
 
 void Game::draw_ui() {}
@@ -266,10 +240,16 @@ void Game::imgui_map() {
                    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoScrollbar);
 
   side_menu->show();
-  // -- 
+  //
   main_menu->show();
 
-  if (side_menu->get_state() == State::ASSET) {
+  if(side_menu->get_state() == State::ASSET){
+    asset_view->show();
+
+    info_bar->show();
+  }
+
+  if (side_menu->get_state() == State::NONE) {
     // info bar that shows the mouse position
     info_bar->show();
 

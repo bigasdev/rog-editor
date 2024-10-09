@@ -12,5 +12,5 @@ public:
   void show();
   State get_state() { return m_state; }
 private: 
-  State m_state = NONE;
+  State m_state = ASSET;
 };
