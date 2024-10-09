@@ -40,6 +40,7 @@ void SideMenu::show() {
   int sprite_height = 16;
   int atlas_size = 500;
 
+
   // Top-left texture coordinates
   ImVec2 uv0 =
       ImVec2((float)sprite_x / 400, (float)sprite_y / 250);

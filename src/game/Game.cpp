@@ -84,9 +84,6 @@ void Game::init() {
   m_camera = new Camera(g_engine->get_window_size());
   m_cooldown = new Cooldown();
 
-  side_menu = std::make_unique<SideMenu>(); 
-  main_menu = std::make_unique<MainMenu>();
-  asset_view = std::make_unique<AssetView>();
 
   //
 
@@ -157,6 +154,11 @@ void Game::init() {
   m_sprite_animator->register_anim(frame);
   m_sprite_animator->register_anim(frame3);
   m_sprite_animator->register_anim(frame2);
+
+
+  side_menu = std::make_unique<SideMenu>(); 
+  main_menu = std::make_unique<MainMenu>();
+  asset_view = std::make_unique<AssetView>(sprite_map);
 }
 
 void Game::fixed_update(double tmod) {}
