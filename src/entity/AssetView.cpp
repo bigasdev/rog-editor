@@ -45,6 +45,9 @@ void AssetView::show() {
   ImGui::End();
 }
 
+//
+// Entity child view is where we have the groups of the entities
+//
 void AssetView::entities() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 430));
   ImGui::BeginChild("Entities", ImVec2(300, 150), true);
@@ -76,7 +79,9 @@ void AssetView::entities() {
   ImGui::EndChild();
 }
 
-// Components
+//
+// Atlas child view is where the selected .aseprite will be divided in selectable sprites with the size of sprite_x and sprite_y
+//
 void AssetView::atlas() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 270));
   ImGui::BeginChild("Atlas", ImVec2(300, 150), true);
@@ -108,6 +113,9 @@ void AssetView::atlas() {
   ImGui::EndChild();
 }
 
+//
+// Pallete child view, its where all the .aseprites of the project will be shown to selection 
+//
 void AssetView::pallete() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 110));
   ImGui::BeginChild(" Pallete", ImVec2(300, 100), true);
