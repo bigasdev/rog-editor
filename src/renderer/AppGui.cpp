@@ -40,7 +40,12 @@ void GUI::setup(SDL_Window *window, SDL_GLContext &renderer) {
   io.Fonts->AddFontDefault();
 
   // Add character ranges and merge into main font
-  static ImWchar ranges[] = {0xf000, 0xf3ff, 0};
+ static ImWchar ranges[] = {
+    0x0020, 0x00FF, // Basic Latin + Latin Supplement
+    0x2190, 0x21FF, // Arrows
+    0x25A0, 0x25FF, // Geometric Shapes
+    0xE000, 0xF8FF, // Private Use Area for icons
+    0}; 
   ImFontConfig config;
   config.MergeMode = true; // adding custom font
   font = io.Fonts->AddFontFromFileTTF("res/font/blueterm.ttf", 12, &config, ranges);

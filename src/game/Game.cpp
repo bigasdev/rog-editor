@@ -58,10 +58,6 @@ bool mouse_clicked;
 bool mouse_wheel_clicked;
 bool mouse_not_clicked;
 
-vec2 grid_ratio = {16, 16};
-vec2 invisible_ratio = {16, 16};
-float sprite_zoom = 3;
-
 bool ctrl_pressed = false;
 bool load_project = false;
 bool save_pressed = false;
@@ -169,8 +165,6 @@ void Game::update(double dt) {
 
   mouse_not_clicked = !mouse_clicked;
 
-  invisible_ratio = grid_ratio * g_camera->get_game_scale();
-
   // LOAD PROJECT FOLDER
   if (ctrl_pressed and load_project) {
     project_folder = Data_Loader::load_folder("Select project folder");
@@ -247,116 +241,6 @@ void Game::imgui_map() {
   }
 
   if (side_menu->get_state() == State::NONE) {
-
-    // menu that contains all the assets found in the project .json
-    ImGui::Begin("Assets");
-    for (auto &asset : m_assets) {
-      if (ImGui::Button(asset.get()->asset_name)) {
-        m_selected_asset = &asset;
-      }
-    }
-    ImGui::End();
-
-    // atlas menu, this is where the selected atlas will be shown
-    ImGui::SetNextWindowBgAlpha(0.15f);
-    ImGui::Begin("  Atlas");
-    if (selected_asset != "") {
-      auto spr = sprite_map[selected_asset];
-      GPU_Image *tex = *g_res->get_texture(selected_asset);
-      spr.wid = tex->w;
-      spr.hei = tex->h;
-      g_renderer->draw(
-          tex, spr, {ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + 100});
-
-      auto w = tex->w * g_camera->get_game_scale();
-      auto h = tex->h * g_camera->get_game_scale();
-
-      // loop used to create the grids around the texture respecting the zoom
-      for (int i = 0; i < w; i += invisible_ratio.x) {
-        for (int j = 0; j < h; j += invisible_ratio.y) {
-          auto mouse_hover = Mouse::is_at_area(
-              {static_cast<int>(ImGui::GetWindowPos().x + i),
-               static_cast<int>(j + ImGui::GetWindowPos().y + 100),
-               static_cast<int>(invisible_ratio.x),
-               static_cast<int>(invisible_ratio.y)},
-              g_engine->get_window_size()->x, g_engine->get_window_size()->y);
-          Col color = {255, 255, 255, 45};
-          auto fill = false;
-
-          if (mouse_hover) {
-            color = {0, 255, 0, 85};
-            fill = true;
-
-            if (mouse_clicked) {
-              if (m_selected_asset != nullptr)
-                m_selected_asset = nullptr;
-
-              Asset asset;
-              asset.file_name = selected_asset;
-              Sprite spr;
-              spr.dst_x = i / invisible_ratio.x;
-              spr.dst_y = j / invisible_ratio.y;
-              spr.wid = grid_ratio.x;
-              spr.hei = grid_ratio.y;
-
-              asset.spr = spr;
-              m_assets.push_back(std::make_unique<Asset>(asset));
-              mouse_clicked = false;
-            }
-          }
-
-          g_renderer->draw_rect(
-              {static_cast<int>(ImGui::GetWindowPos().x + i),
-               static_cast<int>(j + ImGui::GetWindowPos().y + 100),
-               static_cast<int>(invisible_ratio.x),
-               static_cast<int>(invisible_ratio.y)},
-              color, fill);
-        }
-      }
-    }
-    ImGui::End();
-
-    // asset menu that is used to add animations and control the size and
-    // position of the asset
-    if (m_selected_asset != nullptr) {
-      ImGui::Begin("Selected asset");
-      ImGui::InputText("asset_name", m_selected_asset->get()->asset_name,
-                       IM_ARRAYSIZE(m_selected_asset->get()->asset_name));
-      ImGui::DragFloat("dst_x", &m_selected_asset->get()->spr.dst_x, 0.1f);
-      ImGui::DragFloat("dst_y", &m_selected_asset->get()->spr.dst_y, 0.1f);
-      ImGui::DragFloat("wid", &m_selected_asset->get()->spr.wid, 0.1f);
-      ImGui::DragFloat("hei", &m_selected_asset->get()->spr.hei, 0.1f);
-      for (auto &anim : m_selected_asset->get()->animations) {
-        ImGui::InputText("name", &anim.name[0], anim.name.size());
-        ImGui::InputInt("starting_x", &anim.starting_x);
-        ImGui::InputInt("starting_y", &anim.starting_y);
-        ImGui::InputInt("frames", &anim.frames);
-        ImGui::InputFloat("frame_speed", &anim.frame_speed);
-      }
-      if (ImGui::Button("Add animation")) {
-        Animation anim;
-        m_selected_asset->get()->animations.push_back(anim);
-      }
-      if (ImGui::Button("Done")) {
-        m_selected_asset = nullptr;
-      }
-      ImGui::End();
-    }
-
-    // the sprites menu, this will have all the avaliable atlases to select
-    // it contains all the control variables as well
-    ImGui::Begin("Sprites");
-    ImGui::InputInt("Grid ratio x", &x);
-    ImGui::InputInt("Grid ratio y", &y);
-    ImGui::InputFloat("Sprite zoom", &sprite_zoom);
-    grid_ratio = {static_cast<float>(x), static_cast<float>(y)};
-    for (auto &[key, value] : sprite_map) {
-      if (ImGui::Button(key.c_str())) {
-        selected_asset = key;
-        m_selected_asset = nullptr;
-      }
-    }
-    ImGui::End();
   }
   ImGui::PopStyleColor();
   ImGui::End();

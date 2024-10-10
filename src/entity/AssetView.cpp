@@ -36,11 +36,34 @@ void AssetView::show() {
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
   info_bar->show();
+
+  entities();
   atlas();
   pallete();
 
   ImGui::PopStyleColor();
   ImGui::End();
+}
+
+void AssetView::entities(){
+  ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 430));
+  ImGui::BeginChild("Entities", ImVec2(300, 150), true);
+  ImGui::Text("-  Entities --------------");
+  ImGui::BeginTabBar("Groups");
+  ImGui::Button("", ImVec2(26, 20));
+  ImGui::SameLine();
+  ImGui::InputText("##Search", m_search_entity, IM_ARRAYSIZE(m_search_entity));
+  ImGui::SameLine();
+  if(ImGui::BeginTabItem("X")){
+    ImGui::Text("X");
+    ImGui::EndTabItem();
+  }
+  if(ImGui::BeginTabItem("Y")){
+    ImGui::Text("Y");
+    ImGui::EndTabItem();
+  }
+  ImGui::EndTabBar();
+  ImGui::EndChild();
 }
 
 // Components
