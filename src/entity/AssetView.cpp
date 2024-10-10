@@ -4,11 +4,11 @@
 #include "../imgui/imgui_impl_opengl3.h"
 #include "../renderer/Sprite.hpp"
 #include "../res/Res.hpp"
+#include "../tools/ImGuiHelper.hpp"
 #include "SDL.h"
 #include "SDL_gpu.h"
 #include <cstdint>
 #include <iostream>
-#include "../tools/ImGuiHelper.hpp"
 #include <memory>
 
 #include "InfoBar.hpp"
@@ -18,7 +18,7 @@ std::map<std::string, Sprite> m_sprites;
 
 std::string m_selected_pallete;
 
-//settings 
+// settings
 int sprite_x = 8, sprite_y = 8;
 
 AssetView::AssetView(std::map<std::string, Sprite> sprites) {
@@ -45,45 +45,60 @@ void AssetView::show() {
   ImGui::End();
 }
 
-void AssetView::entities(){
+void AssetView::entities() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 430));
   ImGui::BeginChild("Entities", ImVec2(300, 150), true);
   ImGui::Text("-  Entities --------------");
   ImGui::BeginTabBar("Groups");
-  ImGui::Button("", ImVec2(26, 20));
+  if (ImGui::Button("", ImVec2(26, 20))) {
+    ImGui::OpenPopup("New Group");
+  }
+  if (ImGui::BeginPopupModal("New Group")) {
+    ImGui::Text("Create a new group");
+    static char group_name[128] = "";
+    ImGui::InputText("Group Name", group_name, IM_ARRAYSIZE(group_name));
+    if (ImGui::Button("Create", ImVec2(120, 0))) {
+      m_groups.push_back(group_name);
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::EndPopup();
+  }
   ImGui::SameLine();
   ImGui::InputText("##Search", m_search_entity, IM_ARRAYSIZE(m_search_entity));
   ImGui::SameLine();
-  if(ImGui::BeginTabItem("X")){
-    ImGui::Text("X");
-    ImGui::EndTabItem();
-  }
-  if(ImGui::BeginTabItem("Y")){
-    ImGui::Text("Y");
-    ImGui::EndTabItem();
+  for (auto group : m_groups) {
+    if (ImGui::BeginTabItem(group.c_str())) {
+      ImGui::Text("Group: %s", group.c_str());
+      ImGui::EndTabItem();
+    }
   }
   ImGui::EndTabBar();
   ImGui::EndChild();
 }
 
 // Components
-void AssetView::atlas(){
+void AssetView::atlas() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 270));
   ImGui::BeginChild("Atlas", ImVec2(300, 150), true);
   ImGui::Text("-  Atlas --------------");
-  if(m_selected_pallete != ""){
+  if (m_selected_pallete != "") {
     auto asset = *g_res->get_texture(m_selected_pallete);
     auto x = asset->texture_w;
     auto y = asset->texture_h;
     auto row = 0;
 
-    for(int i = 0; i < x; i+= sprite_x){
-      for(int j = 0; j < y; j+= sprite_y){
-        ImGui::ImageButton("t", (void*)(intptr_t)ImGuiHelper::convert_to_imgui(*g_res->get_texture(m_selected_pallete)), ImVec2(48,48), ImVec2((float)i/x, (float)j/y), ImVec2((float)(i+sprite_x)/x, (float)(j+sprite_y)/y));
+    for (int i = 0; i < x; i += sprite_x) {
+      for (int j = 0; j < y; j += sprite_y) {
+        ImGui::ImageButton(
+            "t",
+            (void *)(intptr_t)ImGuiHelper::convert_to_imgui(
+                *g_res->get_texture(m_selected_pallete)),
+            ImVec2(48, 48), ImVec2((float)i / x, (float)j / y),
+            ImVec2((float)(i + sprite_x) / x, (float)(j + sprite_y) / y));
         ImGui::SameLine();
         row++;
 
-        if(row == 5){
+        if (row == 5) {
           row = 0;
           ImGui::NewLine();
         }
@@ -93,14 +108,13 @@ void AssetView::atlas(){
   ImGui::EndChild();
 }
 
-
 void AssetView::pallete() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 110));
   ImGui::BeginChild(" Pallete", ImVec2(300, 100), true);
   ImGui::Text("- Pallete --------------");
   ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.0f));
   for (auto &[key, value] : m_sprites) {
-    if(m_selected_pallete == key){
+    if (m_selected_pallete == key) {
       ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2, 0.1, 0.45, 1.0));
       ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0);
     }
@@ -112,11 +126,13 @@ void AssetView::pallete() {
 
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
       ImGui::BeginTooltip();
-      ImGui::Image((void*)(intptr_t)ImGuiHelper::convert_to_imgui(*g_res->get_texture(key)), ImVec2(400,400));
+      ImGui::Image((void *)(intptr_t)ImGuiHelper::convert_to_imgui(
+                       *g_res->get_texture(key)),
+                   ImVec2(400, 400));
       ImGui::EndTooltip();
     }
 
-    if(m_selected_pallete == key){
+    if (m_selected_pallete == key) {
       ImGui::PopStyleColor();
       ImGui::PopStyleVar();
     }
