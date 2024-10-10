@@ -11,12 +11,15 @@
 #include <iostream>
 #include <memory>
 
+#include "EntityData.hpp"
 #include "InfoBar.hpp"
 
 std::unique_ptr<InfoBar> info_bar;
 std::map<std::string, Sprite> m_sprites;
+std::map<std::string, EntityData> m_entities;
 
 std::string m_selected_pallete;
+static char m_search_entity[256] = "";
 
 // settings
 int sprite_x = 8, sprite_y = 8;
@@ -71,7 +74,12 @@ void AssetView::entities() {
   ImGui::SameLine();
   for (auto group : m_groups) {
     if (ImGui::BeginTabItem(group.c_str())) {
-      ImGui::Text("Group: %s", group.c_str());
+      for (auto &[key, value] : m_entities) {
+        if (value.group == group) {
+          if (ImGui::Button(key.c_str(), ImVec2(150, 18))) {
+          }
+        }
+      }
       ImGui::EndTabItem();
     }
   }
@@ -80,7 +88,8 @@ void AssetView::entities() {
 }
 
 //
-// Atlas child view is where the selected .aseprite will be divided in selectable sprites with the size of sprite_x and sprite_y
+// Atlas child view is where the selected .aseprite will be divided in
+// selectable sprites with the size of sprite_x and sprite_y
 //
 void AssetView::atlas() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 270));
@@ -94,12 +103,14 @@ void AssetView::atlas() {
 
     for (int i = 0; i < x; i += sprite_x) {
       for (int j = 0; j < y; j += sprite_y) {
-        ImGui::ImageButton(
-            "t",
-            (void *)(intptr_t)ImGuiHelper::convert_to_imgui(
-                *g_res->get_texture(m_selected_pallete)),
-            ImVec2(48, 48), ImVec2((float)i / x, (float)j / y),
-            ImVec2((float)(i + sprite_x) / x, (float)(j + sprite_y) / y));
+        if (ImGui::ImageButton(
+                ("t"+std::to_string(i)+std::to_string(j)).c_str(),
+                (void *)(intptr_t)ImGuiHelper::convert_to_imgui(
+                    *g_res->get_texture(m_selected_pallete)),
+                ImVec2(48, 48), ImVec2((float)i / x, (float)j / y),
+                ImVec2((float)(i + sprite_x) / x, (float)(j + sprite_y) / y))) {
+          ImGui::OpenPopup("Create Entity");
+        }
         ImGui::SameLine();
         row++;
 
@@ -109,12 +120,28 @@ void AssetView::atlas() {
         }
       }
     }
+
+    if (ImGui::BeginPopupModal("Create Entity")) {
+      ImGui::Text("Create a new entity");
+      static char entity_name[128] = "";
+      ImGui::InputText("Entity Name", entity_name, IM_ARRAYSIZE(entity_name));
+      if (ImGui::Button("Create", ImVec2(120, 0))) {
+        EntityData data;
+        data.name = entity_name;
+        data.pallete_name = m_selected_pallete;
+        data.group = "default";
+        m_entities[entity_name] = data;
+        ImGui::CloseCurrentPopup();
+      }
+      ImGui::EndPopup();
+    }
   }
   ImGui::EndChild();
 }
 
 //
-// Pallete child view, its where all the .aseprites of the project will be shown to selection 
+// Pallete child view, its where all the .aseprites of the project will be shown
+// to selection
 //
 void AssetView::pallete() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 110));

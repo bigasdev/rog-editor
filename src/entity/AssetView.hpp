@@ -16,7 +16,5 @@ private:
     void atlas();
     void pallete();
 
-    char m_search_entity[256];
-
     std::vector<std::string> m_groups;
 };
