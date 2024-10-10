@@ -112,3 +112,36 @@ void Renderer::draw(GPU_Image *sheet, Sprite spr, vec2 pos) {
                 0, flip);
   m_calls++;
 }
+bool Renderer::is_rect_fully_transparent(GPU_Image* sheet, const GPU_Rect& rect) {
+    // Assuming the image format is RGBA (4 bytes per pixel)
+    int bytes_per_pixel = 4;
+    
+    // Get the pixel data from the GPU image (depends on your library's API)
+    // Assuming here that sheet->pixels gives you raw pixel data.
+    Uint8 *pixel_data = (Uint8 *)sheet->data;
+    
+    if (pixel_data == nullptr) {
+        // No pixel data available
+        return false;
+    }
+
+    int w = sheet->w;
+    int h = sheet->h;
+
+    for(int i =0; i < h; i++){
+        for(int j = 0; j < w; j++){
+            int index = ((i * w) + j) * bytes_per_pixel;
+
+            std::cout << "index: " << (Uint8)pixel_data[index+3] << std::endl;
+
+            if (pixel_data[index + 3] != 0) {
+                // If any pixel in the rect has alpha > 0, the rect is not fully transparent
+                return false;
+            }
+        }
+    }
+    
+
+    // If all pixels in the rect have alpha 0, the rect is fully transparent
+    return true;
+}

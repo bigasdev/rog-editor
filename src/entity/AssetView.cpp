@@ -4,6 +4,7 @@
 #include "../imgui/imgui_impl_opengl3.h"
 #include "../renderer/Sprite.hpp"
 #include "../res/Res.hpp"
+#include "../renderer/Renderer.hpp"
 #include "../tools/ImGuiHelper.hpp"
 #include "SDL.h"
 #include "SDL_gpu.h"
@@ -54,7 +55,7 @@ void AssetView::show() {
 void AssetView::entities() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 430));
   ImGui::BeginChild("Entities", ImVec2(300, 150), true);
-  ImGui::Text("-  Entities --------------");
+  ImGui::Text("  Entities");
   ImGui::BeginTabBar("Groups");
   if (ImGui::Button("", ImVec2(26, 20))) {
     ImGui::OpenPopup("New Group");
@@ -94,15 +95,25 @@ void AssetView::entities() {
 void AssetView::atlas() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 270));
   ImGui::BeginChild("Atlas", ImVec2(300, 150), true);
-  ImGui::Text("-  Atlas --------------");
+  ImGui::Text("  Atlas");
+  ImGui::SameLine();
+  if (ImGui::Button("", ImVec2(24, 20))) {
+    ImGui::OpenPopup("Settings");
+  }
+  if (ImGui::BeginPopup("Settings")) {
+    ImGui::InputInt("Sprite X", &sprite_x);
+    ImGui::InputInt("Sprite Y", &sprite_y);
+    ImGui::EndPopup();
+  }
   if (m_selected_pallete != "") {
     auto asset = *g_res->get_texture(m_selected_pallete);
     auto x = asset->texture_w;
     auto y = asset->texture_h;
     auto row = 0;
 
-    for (int i = 0; i < x; i += sprite_x) {
-      for (int j = 0; j < y; j += sprite_y) {
+    for (int j = 0; j < y; j += sprite_x) {
+      for (int i = 0; i < x; i += sprite_y) {
+        if(g_renderer->is_rect_fully_transparent(asset, {i, j, sprite_x, sprite_y}))continue;
         if (ImGui::ImageButton(
                 ("t"+std::to_string(i)+std::to_string(j)).c_str(),
                 (void *)(intptr_t)ImGuiHelper::convert_to_imgui(
@@ -146,7 +157,7 @@ void AssetView::atlas() {
 void AssetView::pallete() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 110));
   ImGui::BeginChild(" Pallete", ImVec2(300, 100), true);
-  ImGui::Text("- Pallete --------------");
+  ImGui::Text(" Pallete");
   ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.0f, 0.0f));
   for (auto &[key, value] : m_sprites) {
     if (m_selected_pallete == key) {

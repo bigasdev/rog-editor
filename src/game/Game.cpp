@@ -147,9 +147,9 @@ void Game::init() {
   frame3.loop = true;
   frame3.state = &mouse_not_clicked;
 
-  m_sprite_animator->register_anim(frame);
-  m_sprite_animator->register_anim(frame3);
-  m_sprite_animator->register_anim(frame2);
+  //m_sprite_animator->register_anim(frame);
+  //m_sprite_animator->register_anim(frame3);
+  //m_sprite_animator->register_anim(frame2);
 
 
   side_menu = std::make_unique<SideMenu>(); 
