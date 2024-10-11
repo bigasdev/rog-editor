@@ -37,6 +37,8 @@ AssetView::AssetView(std::map<std::string, Sprite> sprites) {
     pallete.ase = cute_aseprite_load_from_file(("res/" + key + ".aseprite").c_str(), NULL);
     m_sprites[key] = pallete;
   }
+
+  m_groups.push_back("default");
 }
 
 void AssetView::show() {
