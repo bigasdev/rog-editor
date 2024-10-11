@@ -1,11 +1,14 @@
 #include "Renderer.hpp"
+#include "../core/Engine.hpp"
 #include "../core/global.hpp"
+#include "../renderer/Sprite.hpp"
 #include "../res/Res.hpp"
 #include "../tools/Logger.hpp"
-#include  "../core/Engine.hpp"
-#include "../renderer/Sprite.hpp"
 #include "Camera.hpp"
 #include "SDL_gpu.h"
+#include "SDL_image.h"
+#include "SDL_surface.h"
+#include "cute_aseprite.h"
 
 Renderer::Renderer(GPU_Target *gpu) : m_gpu(gpu) {}
 
@@ -32,8 +35,8 @@ void Renderer::draw_line(Line line, Col color) {
   m_calls++;
 }
 
-void Renderer::draw_text(vec2 pos, const char *text, TTF_Font *font,
-                         Col color, int size, int width) {
+void Renderer::draw_text(vec2 pos, const char *text, TTF_Font *font, Col color,
+                         int size, int width) {
   SDL_Surface *surfaceMessage = TTF_RenderText_Blended_Wrapped(
       font, text, {color.r, color.g, color.b, color.a}, width);
   GPU_Image *message = GPU_CopyImageFromSurface(surfaceMessage);
@@ -76,12 +79,12 @@ void Renderer::draw_from_sheet(GPU_Image *sheet, vec2 pos, Rect l_point,
     auto program = g_res->get_shader_id();
     GPU_ShaderBlock block = g_res->get_shader_block();
     GPU_ActivateShaderProgram(program, &block);
-    //auto col = g_res->get_color_primitive(2);
-    GPU_SetUniformf(GPU_GetUniformLocation(program,"r") , 1.0);
-    GPU_SetUniformf(GPU_GetUniformLocation(program,"g") , 0.0);
-    GPU_SetUniformf(GPU_GetUniformLocation(program,"b") , 0.0);
-    GPU_SetUniformf(GPU_GetUniformLocation(program,"width") , sheet->w);
-    GPU_SetUniformf(GPU_GetUniformLocation(program,"height") , sheet->h);
+    // auto col = g_res->get_color_primitive(2);
+    GPU_SetUniformf(GPU_GetUniformLocation(program, "r"), 1.0);
+    GPU_SetUniformf(GPU_GetUniformLocation(program, "g"), 0.0);
+    GPU_SetUniformf(GPU_GetUniformLocation(program, "b"), 0.0);
+    GPU_SetUniformf(GPU_GetUniformLocation(program, "width"), sheet->w);
+    GPU_SetUniformf(GPU_GetUniformLocation(program, "height"), sheet->h);
   }
 
   GPU_BlitRectX(sheet, &src, m_gpu, &dst, 0, 0, 0, GPU_FLIP_NONE);
@@ -91,7 +94,8 @@ void Renderer::draw_from_sheet(GPU_Image *sheet, vec2 pos, Rect l_point,
   GPU_DeactivateShaderProgram();
 }
 
-//draw of a sprite, this is the same as for drawing an entity but it can be used standalone
+// draw of a sprite, this is the same as for drawing an entity but it can be
+// used standalone
 void Renderer::draw(GPU_Image *sheet, Sprite spr, vec2 pos) {
   GPU_Rect src;
   src.x = spr.dst_x * spr.wid;
@@ -102,46 +106,30 @@ void Renderer::draw(GPU_Image *sheet, Sprite spr, vec2 pos) {
   GPU_Rect dst;
   dst.x = static_cast<int>(pos.x + spr.spr_x);
   dst.y = static_cast<int>(pos.y + spr.spr_y);
-  //this works??
+  // this works??
   dst.w = spr.wid * g_camera->get_game_scale() * spr.scale_x * spr.squash_x;
   dst.h = spr.hei * g_camera->get_game_scale() * spr.scale_y * spr.squash_y;
 
   GPU_FlipEnum flip = spr.dir == -1 ? GPU_FLIP_HORIZONTAL : GPU_FLIP_NONE;
 
-  GPU_BlitRectX(sheet, &src, m_gpu, &dst, spr.angle, 0,
-                0, flip);
+  GPU_BlitRectX(sheet, &src, m_gpu, &dst, spr.angle, 0, 0, flip);
   m_calls++;
 }
-bool Renderer::is_rect_fully_transparent(GPU_Image* sheet, const GPU_Rect& rect) {
-    // Assuming the image format is RGBA (4 bytes per pixel)
-    int bytes_per_pixel = 4;
-    
-    // Get the pixel data from the GPU image (depends on your library's API)
-    // Assuming here that sheet->pixels gives you raw pixel data.
-    Uint8 *pixel_data = (Uint8 *)sheet->data;
-    
-    if (pixel_data == nullptr) {
-        // No pixel data available
+bool Renderer::is_rect_fully_transparent(GPU_Image *sheet,
+                                         const GPU_Rect &rect) {
+  //HACK: IT WORKS BUT I CANT BE LOADING THE SPRITE EVERY TIME
+  auto spr = cute_aseprite_load_from_file("res/character_atlas.aseprite", NULL);
+  auto frame = &spr->frames[0];
+  auto pixels = reinterpret_cast<const uint8_t *>(frame->ase->frames[0].pixels);
+
+  for (int i = rect.x; i < rect.x + rect.w; i++) {
+    for (int j = rect.y; j < rect.y + rect.h; j++) {
+      auto index = (j * sheet->w + i) * 4;
+      if (pixels[index + 3] != 0) {
         return false;
+      }
     }
+  }
 
-    int w = sheet->w;
-    int h = sheet->h;
-
-    for(int i =0; i < h; i++){
-        for(int j = 0; j < w; j++){
-            int index = ((i * w) + j) * bytes_per_pixel;
-
-            std::cout << "index: " << (Uint8)pixel_data[index+3] << std::endl;
-
-            if (pixel_data[index + 3] != 0) {
-                // If any pixel in the rect has alpha > 0, the rect is not fully transparent
-                return false;
-            }
-        }
-    }
-    
-
-    // If all pixels in the rect have alpha 0, the rect is fully transparent
-    return true;
+  return true;
 }
