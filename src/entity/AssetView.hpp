@@ -4,6 +4,12 @@
 #include <string>
 #include <vector>
 class Sprite;
+class ase_t;
+
+struct Pallete{
+  Sprite *sprite;
+  ase_t *ase;
+};
 
 class AssetView
 {

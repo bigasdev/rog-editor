@@ -116,10 +116,8 @@ void Renderer::draw(GPU_Image *sheet, Sprite spr, vec2 pos) {
   m_calls++;
 }
 bool Renderer::is_rect_fully_transparent(GPU_Image *sheet,
-                                         const GPU_Rect &rect) {
-  //HACK: IT WORKS BUT I CANT BE LOADING THE SPRITE EVERY TIME
-  auto spr = cute_aseprite_load_from_file("res/character_atlas.aseprite", NULL);
-  auto frame = &spr->frames[0];
+                                         const GPU_Rect &rect, ase_t *ase) {
+  auto frame = &ase->frames[0];
   auto pixels = reinterpret_cast<const uint8_t *>(frame->ase->frames[0].pixels);
 
   for (int i = rect.x; i < rect.x + rect.w; i++) {

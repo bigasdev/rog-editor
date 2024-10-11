@@ -11,12 +11,13 @@
 #include <cstdint>
 #include <iostream>
 #include <memory>
+#include "cute_aseprite.h"
 
 #include "EntityData.hpp"
 #include "InfoBar.hpp"
 
 std::unique_ptr<InfoBar> info_bar;
-std::map<std::string, Sprite> m_sprites;
+std::map<std::string, Pallete> m_sprites;
 std::map<std::string, EntityData> m_entities;
 
 std::string m_selected_pallete;
@@ -28,7 +29,12 @@ int sprite_x = 8, sprite_y = 8;
 AssetView::AssetView(std::map<std::string, Sprite> sprites) {
   info_bar = std::make_unique<InfoBar>();
 
-  m_sprites = sprites;
+  for (auto &[key, value] : sprites) {
+    Pallete pallete;
+    pallete.sprite = &value;
+    pallete.ase = cute_aseprite_load_from_file(("res/" + key + ".aseprite").c_str(), NULL);
+    m_sprites[key] = pallete;
+  }
 }
 
 void AssetView::show() {
@@ -113,7 +119,7 @@ void AssetView::atlas() {
 
     for (int j = 0; j < y; j += sprite_x) {
       for (int i = 0; i < x; i += sprite_y) {
-        if(g_renderer->is_rect_fully_transparent(asset, {i, j, sprite_x, sprite_y}))continue;
+        if(g_renderer->is_rect_fully_transparent(asset, {i, j, sprite_x, sprite_y}, m_sprites[m_selected_pallete].ase))continue;
         if (ImGui::ImageButton(
                 ("t"+std::to_string(i)+std::to_string(j)).c_str(),
                 (void *)(intptr_t)ImGuiHelper::convert_to_imgui(
