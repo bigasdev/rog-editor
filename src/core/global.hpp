@@ -9,6 +9,7 @@ class Renderer;
 class Camera;
 class Cooldown;
 class InputManager;
+class UndoManager;
 
 extern Engine* g_engine;
 extern Res* g_res;
@@ -17,6 +18,7 @@ extern Camera* g_camera;
 extern Cooldown* g_cooldown;
 extern SoundManager* g_sound_manager;
 extern InputManager* g_input_manager;
+extern UndoManager* g_undo_manager;
 
 extern bool g_controller_connected;
 

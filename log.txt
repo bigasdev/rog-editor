@@ -63,4 +63,28 @@ logo
 ui
 Game initialized
 Engine post init
+Adding action to undo stack
+Adding action to undo stack
+Undoing last action
+Undoing asset t2
+Undoing asset t2
+Undoing last action
+Undoing asset t
+Undoing asset t
+Adding action to undo stack
+Undoing last action
+Undoing asset new
+Undoing asset new
+Adding action to undo stack
+Undoing last action
+Undoing asset hellooooo
+Undoing asset hellooooo
+Adding action to undo stack
+Adding action to undo stack
+Undoing last action
+Undoing asset yes
+Undoing asset yes
+Undoing last action
+Undoing asset omg
+Undoing asset omg
 SDL2 quit

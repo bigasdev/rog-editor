@@ -24,6 +24,9 @@
 #include <memory>
 #include <string>
 
+//Systems
+#include "../core/UndoManager.hpp"
+
 //Components
 #include "../entity/SideMenu.hpp"
 #include "../entity/MainMenu.hpp"
@@ -61,11 +64,13 @@ bool mouse_not_clicked;
 bool ctrl_pressed = false;
 bool load_project = false;
 bool save_pressed = false;
+bool z_pressed = false;
 bool load_assets = false;
 
+//Systems
 SpriteAnimator *m_sprite_animator;
-
 Fini *fini;
+UndoManager *m_undo_manager;
 
 //Components
 std::unique_ptr<SideMenu> side_menu;
@@ -79,7 +84,8 @@ Game::~Game() {}
 void Game::init() {
   m_camera = new Camera(g_engine->get_window_size());
   m_cooldown = new Cooldown();
-
+  m_undo_manager = new UndoManager();
+  g_undo_manager = m_undo_manager;
 
   //
 
@@ -121,6 +127,7 @@ void Game::init() {
   g_input_manager->bind_keyboard(SDLK_s, &save_pressed);
   g_input_manager->bind_keyboard(SDLK_p, &load_assets);
   g_input_manager->bind_keyboard(SDLK_e, &load_project);
+  g_input_manager->bind_keyboard(SDLK_z, &z_pressed);
   g_input_manager->bind_keyboard(SDLK_LCTRL, &ctrl_pressed);
 
   // test stuff
@@ -203,6 +210,13 @@ void Game::update(double dt) {
     load(file_path);
     fini->set_value("last", "asset", file_path);
     load_assets = false;
+    ctrl_pressed = false;
+  }
+
+  // UNDO
+  if (ctrl_pressed and z_pressed) {
+    m_undo_manager->undo();
+    z_pressed = false;
     ctrl_pressed = false;
   }
 }

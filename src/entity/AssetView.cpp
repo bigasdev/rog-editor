@@ -5,6 +5,7 @@
 #include "../renderer/Sprite.hpp"
 #include "../res/Res.hpp"
 #include "../renderer/Renderer.hpp"
+#include "../core/UndoManager.hpp"
 #include "../tools/ImGuiHelper.hpp"
 #include "SDL.h"
 #include "SDL_gpu.h"
@@ -12,6 +13,7 @@
 #include <iostream>
 #include <memory>
 #include "cute_aseprite.h"
+#include "AssetAction.hpp"
 
 #include "EntityData.hpp"
 #include "InfoBar.hpp"
@@ -147,7 +149,8 @@ void AssetView::atlas() {
         data.name = entity_name;
         data.pallete_name = m_selected_pallete;
         data.group = "default";
-        m_entities[entity_name] = data;
+        auto action = new AssetAction(data, m_entities);
+        g_undo_manager->add(action);
         ImGui::CloseCurrentPopup();
       }
       ImGui::EndPopup();
