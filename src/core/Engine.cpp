@@ -215,13 +215,6 @@ void Engine::draw() {
   }
 
   GPU_Clear(m_gpu);
-  GPU_SetCamera(m_gpu, *g_camera->get_gpu_cam());
-  m_game->draw_root();
-  m_game->draw_ent();
-  // game draw
-  GPU_SetCamera(m_gpu, nullptr);
-  m_game->draw_ui();
-  GPU_DeactivateShaderProgram();
 
 #if _DEBUG
   GPU_SetCamera(m_gpu, nullptr);
@@ -232,6 +225,15 @@ void Engine::draw() {
   GPU_FlushBlitBuffer();
   m_game->draw_imgui();
 #endif
+
+  GPU_SetCamera(m_gpu, *g_camera->get_gpu_cam());
+  m_game->draw_root();
+  m_game->draw_ent();
+  // game draw
+  GPU_SetCamera(m_gpu, nullptr);
+  m_game->draw_ui();
+  GPU_DeactivateShaderProgram();
+
 
   GPU_Flip(m_gpu);
 }

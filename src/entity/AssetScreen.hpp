@@ -10,4 +10,5 @@ public:
   void ent();
   void ui();
 private:
+  int m_zoom = 1;
 };

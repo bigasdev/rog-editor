@@ -24,14 +24,14 @@
 #include <memory>
 #include <string>
 
-//Systems
+// Systems
 #include "../core/UndoManager.hpp"
 
-//Components
-#include "../entity/SideMenu.hpp"
-#include "../entity/MainMenu.hpp"
-#include "../entity/AssetView.hpp"
+// Components
 #include "../entity/AssetScreen.hpp"
+#include "../entity/AssetView.hpp"
+#include "../entity/MainMenu.hpp"
+#include "../entity/SideMenu.hpp"
 
 struct Animation {
   std::string name;
@@ -68,12 +68,12 @@ bool save_pressed = false;
 bool z_pressed = false;
 bool load_assets = false;
 
-//Systems
+// Systems
 SpriteAnimator *m_sprite_animator;
 Fini *fini;
 UndoManager *m_undo_manager;
 
-//Components
+// Components
 std::unique_ptr<SideMenu> side_menu;
 std::unique_ptr<MainMenu> main_menu;
 std::unique_ptr<AssetView> asset_view;
@@ -156,12 +156,11 @@ void Game::init() {
   frame3.loop = true;
   frame3.state = &mouse_not_clicked;
 
-  //m_sprite_animator->register_anim(frame);
-  //m_sprite_animator->register_anim(frame3);
-  //m_sprite_animator->register_anim(frame2);
+  // m_sprite_animator->register_anim(frame);
+  // m_sprite_animator->register_anim(frame3);
+  // m_sprite_animator->register_anim(frame2);
 
-
-  side_menu = std::make_unique<SideMenu>(); 
+  side_menu = std::make_unique<SideMenu>();
   main_menu = std::make_unique<MainMenu>();
   asset_view = std::make_unique<AssetView>(sprite_map);
   asset_screen = std::make_unique<AssetScreen>();
@@ -223,8 +222,10 @@ void Game::update(double dt) {
     ctrl_pressed = false;
   }
 
-  // components updates 
-  asset_screen->update();
+  // components updates
+  if (side_menu->get_state() == State::ASSET) {
+    asset_screen->update();
+  }
 }
 
 void Game::post_update(double dt) {
@@ -233,15 +234,21 @@ void Game::post_update(double dt) {
 }
 
 void Game::draw_root() {
-  asset_screen->root();
+  if (side_menu->get_state() == State::ASSET) {
+    asset_screen->root();
+  }
 }
 
 void Game::draw_ent() {
-  asset_screen->ent();
+  if (side_menu->get_state() == State::ASSET) {
+    asset_screen->ent();
+  }
 }
 
 void Game::draw_ui() {
-  asset_screen->ui();
+  if (side_menu->get_state() == State::ASSET) {
+    asset_screen->ui();
+  }
 }
 
 void Game::imgui_assets() {}
@@ -251,16 +258,19 @@ int y = 16;
 void Game::imgui_map() {
   ImGui::SetNextWindowPos(ImVec2(0, 0));
   ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1, 0.1, 0.1, 0.0));
-  ImGui::SetNextWindowSize(ImVec2(g_engine->get_window_size()->x, g_engine->get_window_size()->y));
+  ImGui::SetNextWindowSize(
+      ImVec2(g_engine->get_window_size()->x, g_engine->get_window_size()->y));
   ImGui::Begin("Workspace", nullptr,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoScrollbar);
+                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |
+                   ImGuiWindowFlags_NoMouseInputs |
+                   ImGuiWindowFlags_NoScrollbar);
 
   side_menu->show();
   //
   main_menu->show();
 
-  if(side_menu->get_state() == State::ASSET){
+  if (side_menu->get_state() == State::ASSET) {
     asset_view->show();
   }
 
