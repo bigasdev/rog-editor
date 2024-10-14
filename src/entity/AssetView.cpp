@@ -47,7 +47,7 @@ void AssetView::show() {
                                   g_engine->get_window_size()->y - 25));
   ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.05, 0.05, 0.05, 1.0));
   ImGui::Begin(" Assets", nullptr,
-               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
 
   info_bar->show();
 
@@ -103,6 +103,8 @@ void AssetView::entities() {
 // Atlas child view is where the selected .aseprite will be divided in
 // selectable sprites with the size of sprite_x and sprite_y
 //
+int spr_pos_x = 0; 
+int spr_pos_y = 0;
 void AssetView::atlas() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 270));
   ImGui::BeginChild("Atlas", ImVec2(300, 150), true);
@@ -132,6 +134,8 @@ void AssetView::atlas() {
                 ImVec2(48, 48), ImVec2((float)i / x, (float)j / y),
                 ImVec2((float)(i + sprite_x) / x, (float)(j + sprite_y) / y))) {
           ImGui::OpenPopup("Create Entity");
+          spr_pos_x = i;
+          spr_pos_y = j;
         }
         ImGui::SameLine();
         row++;
@@ -152,6 +156,9 @@ void AssetView::atlas() {
         data.name = entity_name;
         data.pallete_name = m_selected_pallete;
         data.group = "default";
+        data.sprite_size = {sprite_x, sprite_y};
+        data.sprite_pos = {spr_pos_x, spr_pos_y};
+        data.atlas_pos = {spr_pos_x/sprite_x, spr_pos_y/sprite_y};
         auto action = new AssetAction(data, m_entities);
         g_undo_manager->add(action);
         ImGui::CloseCurrentPopup();

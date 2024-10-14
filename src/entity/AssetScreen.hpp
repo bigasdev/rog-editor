@@ -1,5 +1,7 @@
 #pragma once 
 
+#include "../tools/Common.hpp"
+
 class AssetScreen{
 public:
   AssetScreen();
@@ -10,5 +12,7 @@ public:
   void ent();
   void ui();
 private:
-  int m_zoom = 1;
+  int m_zoom = 4;
+
+  vec2 m_grid_size = {16,16};
 };
