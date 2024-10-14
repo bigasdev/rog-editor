@@ -88,6 +88,7 @@ void AssetView::entities() {
       for (auto &[key, value] : m_entities) {
         if (value.group == group) {
           if (ImGui::Button(key.c_str(), ImVec2(150, 18))) {
+            g_selected_entity = &value;
           }
         }
       }

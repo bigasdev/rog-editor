@@ -9,4 +9,6 @@ SoundManager* g_sound_manager;
 InputManager* g_input_manager;
 UndoManager* g_undo_manager;
 
+EntityData* g_selected_entity;
+
 bool g_controller_connected;

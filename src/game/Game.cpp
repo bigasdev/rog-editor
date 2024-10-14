@@ -31,6 +31,7 @@
 #include "../entity/SideMenu.hpp"
 #include "../entity/MainMenu.hpp"
 #include "../entity/AssetView.hpp"
+#include "../entity/AssetScreen.hpp"
 
 struct Animation {
   std::string name;
@@ -76,6 +77,7 @@ UndoManager *m_undo_manager;
 std::unique_ptr<SideMenu> side_menu;
 std::unique_ptr<MainMenu> main_menu;
 std::unique_ptr<AssetView> asset_view;
+std::unique_ptr<AssetScreen> asset_screen;
 
 Game::Game() {}
 
@@ -162,6 +164,7 @@ void Game::init() {
   side_menu = std::make_unique<SideMenu>(); 
   main_menu = std::make_unique<MainMenu>();
   asset_view = std::make_unique<AssetView>(sprite_map);
+  asset_screen = std::make_unique<AssetScreen>();
 }
 
 void Game::fixed_update(double tmod) {}
@@ -219,6 +222,9 @@ void Game::update(double dt) {
     z_pressed = false;
     ctrl_pressed = false;
   }
+
+  // components updates 
+  asset_screen->update();
 }
 
 void Game::post_update(double dt) {
@@ -227,12 +233,16 @@ void Game::post_update(double dt) {
 }
 
 void Game::draw_root() {
+  asset_screen->root();
 }
 
 void Game::draw_ent() {
+  asset_screen->ent();
 }
 
-void Game::draw_ui() {}
+void Game::draw_ui() {
+  asset_screen->ui();
+}
 
 void Game::imgui_assets() {}
 

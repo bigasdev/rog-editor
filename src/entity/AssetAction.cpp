@@ -1,6 +1,7 @@
 #include "AssetAction.hpp"
 #include "EntityData.hpp"
 #include "../tools/Logger.hpp"
+#include "../core/global.hpp"
 #include <algorithm>
 #include <string>
 #include <map>
@@ -9,6 +10,7 @@ AssetAction::~AssetAction() {}
 
 void AssetAction::execute() {
   m_asset_entities[m_entity.name] = m_entity;
+  g_selected_entity = &m_asset_entities[m_entity.name];
 }
 
 void AssetAction::undo() {
