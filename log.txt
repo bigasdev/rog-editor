@@ -63,4 +63,5 @@ logo
 ui
 Game initialized
 Engine post init
+Adding action to undo stack
 SDL2 quit
