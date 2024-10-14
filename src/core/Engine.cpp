@@ -226,10 +226,11 @@ void Engine::draw() {
   m_game->draw_imgui();
 #endif
 
-  GPU_SetCamera(m_gpu, *g_camera->get_gpu_cam());
-  m_game->draw_root();
-  m_game->draw_ent();
   // game draw
+  GPU_SetCamera(m_gpu, nullptr);
+  m_game->draw_root();
+  GPU_SetCamera(m_gpu, *g_camera->get_gpu_cam());
+  m_game->draw_ent();
   GPU_SetCamera(m_gpu, nullptr);
   m_game->draw_ui();
   GPU_DeactivateShaderProgram();
