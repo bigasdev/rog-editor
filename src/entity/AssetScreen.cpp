@@ -16,24 +16,21 @@ void AssetScreen::update() {
 
 void AssetScreen::root() {
   if (g_selected_entity != nullptr) {
+    int x = 0;
     for (int i = 380; i < g_engine->get_window_size()->x - 40;
          i += (16 * m_zoom)) {
       for (int j = 50; j < g_engine->get_window_size()->y - 40;
            j += (16 * m_zoom)) {
-        if (i % 2 == 0 || j % 2 == 0) {
+        if (x == 1) {
           g_renderer->draw_rect({i, j, 16, 16}, {82, 250, 161, 55}, true);
+          x = 0;
         } else {
           g_renderer->draw_rect({i, j, 16, 16}, {35, 205, 113, 65}, true);
+          x++;
         }
       }
     }
   }
-  for (int i = 320; i < g_engine->get_window_size()->x - 40;
-       i += (16 * m_zoom)) {
-    g_renderer->draw_rect({i, 50, 16, 16}, {255, 0, 0, 255}, true);
-  }
-  g_renderer->draw_text({20, 20}, "Test", g_res->get_font("arial"),
-                        {255, 255, 255, 255}, 1, 200);
 }
 
 void AssetScreen::ent() {}
