@@ -60,7 +60,7 @@ void Renderer::draw_text(vec2 pos, const char *text, TTF_Font *font, Col color,
   m_calls++;
 }
 
-void Renderer::draw_from_sheet(GPU_Image *sheet, vec2 pos, Rect l_point,
+void Renderer::draw_from_sheet(GPU_Image *sheet, vec2 pos, Rect l_point,int scale,
                                bool use_shader) {
   GPU_Rect src;
   src.x = l_point.x * l_point.w;
@@ -72,8 +72,8 @@ void Renderer::draw_from_sheet(GPU_Image *sheet, vec2 pos, Rect l_point,
   dst.x = static_cast<int>(pos.x);
   dst.y = static_cast<int>(pos.y);
   // the zoom is the key..
-  dst.w = src.w * g_camera->get_game_scale();
-  dst.h = src.h * g_camera->get_game_scale();
+  dst.w = (src.w*scale) * g_camera->get_game_scale();
+  dst.h = (src.h*scale) * g_camera->get_game_scale();
 
   if (use_shader) {
     auto program = g_res->get_shader_id();
