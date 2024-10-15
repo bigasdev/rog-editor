@@ -64,10 +64,4 @@ ui
 Game initialized
 Engine post init
 Adding action to undo stack
-Adding action to undo stack
-Adding action to undo stack
-Undoing last action
-Undoing asset ha
-Undoing last action
-Undoing asset e
 SDL2 quit
