@@ -1,19 +1,19 @@
 #include "AssetView.hpp"
 #include "../core/Engine.hpp"
+#include "../core/UndoManager.hpp"
 #include "../core/global.hpp"
 #include "../imgui/imgui_impl_opengl3.h"
+#include "../renderer/Renderer.hpp"
 #include "../renderer/Sprite.hpp"
 #include "../res/Res.hpp"
-#include "../renderer/Renderer.hpp"
-#include "../core/UndoManager.hpp"
 #include "../tools/ImGuiHelper.hpp"
+#include "AssetAction.hpp"
 #include "SDL.h"
 #include "SDL_gpu.h"
+#include "cute_aseprite.h"
 #include <cstdint>
 #include <iostream>
 #include <memory>
-#include "cute_aseprite.h"
-#include "AssetAction.hpp"
 
 #include "EntityData.hpp"
 #include "InfoBar.hpp"
@@ -34,7 +34,8 @@ AssetView::AssetView(std::map<std::string, Sprite> sprites) {
   for (auto &[key, value] : sprites) {
     Pallete pallete;
     pallete.sprite = &value;
-    pallete.ase = cute_aseprite_load_from_file(("res/" + key + ".aseprite").c_str(), NULL);
+    pallete.ase = cute_aseprite_load_from_file(
+        ("res/" + key + ".aseprite").c_str(), NULL);
     m_sprites[key] = pallete;
   }
 
@@ -47,7 +48,8 @@ void AssetView::show() {
                                   g_engine->get_window_size()->y - 25));
   ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.05, 0.05, 0.05, 1.0));
   ImGui::Begin(" Assets", nullptr,
-               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
+               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                   ImGuiWindowFlags_NoScrollbar);
 
   info_bar->show();
 
@@ -87,6 +89,20 @@ void AssetView::entities() {
     if (ImGui::BeginTabItem(group.c_str())) {
       for (auto &[key, value] : m_entities) {
         if (value.group == group) {
+          auto asset = *g_res->get_texture(value.pallete_name);
+          auto x = asset->texture_w;
+          auto y = asset->texture_h;
+          ImGui::Image(
+              (void *)(intptr_t)ImGuiHelper::convert_to_imgui(
+                  *g_res->get_texture(value.pallete_name)),
+              ImVec2(16, 16),
+              ImVec2((float)value.sprite_pos.x / x,
+                     (float)value.sprite_pos.y / y),
+              ImVec2((float)(value.sprite_pos.x + value.sprite_size.x) /
+                         x,
+                     (float)(value.sprite_pos.y + value.sprite_size.y) /
+                         y));
+          ImGui::SameLine();
           if (ImGui::Button(key.c_str(), ImVec2(150, 18))) {
             g_selected_entity = &value;
           }
@@ -103,7 +119,7 @@ void AssetView::entities() {
 // Atlas child view is where the selected .aseprite will be divided in
 // selectable sprites with the size of sprite_x and sprite_y
 //
-int spr_pos_x = 0; 
+int spr_pos_x = 0;
 int spr_pos_y = 0;
 void AssetView::atlas() {
   ImGui::SetNextWindowPos(ImVec2(85, g_engine->get_window_size()->y - 270));
@@ -126,9 +142,12 @@ void AssetView::atlas() {
 
     for (int j = 0; j < y; j += sprite_x) {
       for (int i = 0; i < x; i += sprite_y) {
-        if(g_renderer->is_rect_fully_transparent(asset, {i, j, sprite_x, sprite_y}, m_sprites[m_selected_pallete].ase))continue;
+        if (g_renderer->is_rect_fully_transparent(
+                asset, {i, j, sprite_x, sprite_y},
+                m_sprites[m_selected_pallete].ase))
+          continue;
         if (ImGui::ImageButton(
-                ("t"+std::to_string(i)+std::to_string(j)).c_str(),
+                ("t" + std::to_string(i) + std::to_string(j)).c_str(),
                 (void *)(intptr_t)ImGuiHelper::convert_to_imgui(
                     *g_res->get_texture(m_selected_pallete)),
                 ImVec2(48, 48), ImVec2((float)i / x, (float)j / y),
@@ -158,7 +177,7 @@ void AssetView::atlas() {
         data.group = "default";
         data.sprite_size = {sprite_x, sprite_y};
         data.sprite_pos = {spr_pos_x, spr_pos_y};
-        data.atlas_pos = {spr_pos_x/sprite_x, spr_pos_y/sprite_y};
+        data.atlas_pos = {spr_pos_x / sprite_x, spr_pos_y / sprite_y};
         auto action = new AssetAction(data, m_entities);
         g_undo_manager->add(action);
         ImGui::CloseCurrentPopup();

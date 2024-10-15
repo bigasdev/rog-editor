@@ -12,7 +12,7 @@ public:
   void ent();
   void ui();
 private:
-  int m_zoom = 4;
+  int m_zoom = 8;
 
   vec2 m_grid_size = {16,16};
 };

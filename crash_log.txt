@@ -64,4 +64,4 @@ ui
 Game initialized
 Engine post init
 Adding action to undo stack
-ERROR: Signal: 11
+ERROR: Signal: 22
