@@ -46,12 +46,14 @@ Loading sound: victory
 SoundManager::load_sound: loaded sound victory
 res/character_atlas.aseprite
 res/concept.aseprite
+res/item_atlas.aseprite
 res/logo.aseprite
 res/ui.aseprite
 Finished aseprite load!
 ------------
 Aseprite: character_atlas
 Aseprite: concept
+Aseprite: item_atlas
 Aseprite: logo
 Aseprite: ui
 Loaded shader: res/shaders/light_vertex.glsl and res/shaders/newoutline.frag.glsl
@@ -59,9 +61,25 @@ Game:1
 1
 character_atlas
 concept
+item_atlas
 logo
 ui
 Game initialized
 Engine post init
 Adding action to undo stack
+Undoing last action
+Undoing asset b
+Adding action to undo stack
+Adding action to undo stack
+Adding action to undo stack
+Undoing last action
+Undoing asset 
+Undoing last action
+Undoing last action
+Adding action to undo stack
+Adding action to undo stack
+Undoing last action
+Undoing asset hehehetw
+Undoing last action
+Undoing asset etetw
 SDL2 quit
